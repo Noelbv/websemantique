@@ -1,19 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Router } from "react-router-dom";
-import history from './misc/history';
 import "./index.css";
 import App from "./App";
 import AppProvider from "./AppProvider";
+import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
     <AppProvider>
-      <Router history={history}>
+      <BrowserRouter>
         <App />
-      </Router>
+      </BrowserRouter>
     </AppProvider>
   </React.StrictMode>
 );

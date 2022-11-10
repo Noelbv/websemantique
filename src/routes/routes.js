@@ -9,29 +9,34 @@ const ROUTES = [
         path: "/", 
         key: RouteKey.HOME_PAGE, 
         exact: true, 
-        element: () => <HomePage />
+        element: <HomePage />,
     },
     {
         path: "/search",
         key: RouteKey.SEARCH_PAGE,
         exact: true,
-        element: () => <SearchPage />,
+        element: <SearchPage />,
     },
     {
         path: "/film",
         key: RouteKey.FILM_PAGE,
         exact: true,
-        element: () => <FilmPage />,
+        element: <FilmPage />,
     },
 ];
 
-const RenderRoutes = (routes) => {
+const RenderRoutes = () => {
     return (       
     <Routes>
-        {routes.map((route) => {
-          return <Route {...route} />;
+        {ROUTES.map((route) => {
+          return <Route 
+            path={route.path} 
+            key={route.key}
+            exact={route.exact} 
+            element={route.element} 
+            />;
         })}
-        <Route component={() => <h1>Not Found!</h1>} />
+        <Route element={<h1>Not Found!</h1>} />
     </Routes> );
 }
  
