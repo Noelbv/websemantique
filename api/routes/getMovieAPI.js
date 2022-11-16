@@ -9,7 +9,6 @@ router.get('*', function(req, res, next) {
 		mode: 'text',
 		pythonOptions: ['-u'], // get print results in real-time
 		scriptPath: './python', //If you are having python_test.py script in same folder, then it's optional.
-		pythonPath: './python/api-env/Scripts/python.exe',
 		args: [3, req.query.input] //An argument which can be accessed in the script using sys.argv[1]
 	};
 
