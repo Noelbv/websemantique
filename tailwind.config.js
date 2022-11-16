@@ -7,11 +7,14 @@ module.exports = {
 	theme: {
 		extend: {
 			colors: {
-				'blacked': '#1C1B1B',
+				'blacked': '#21252b',
 			  },
 			fontFamily: {
 				'poppins': ['"Poppins"'],
-			}
+			},
+			fontSize: {
+				'movie-title': '4rem',
+			},
 		},
 	},
 	variants: {},
