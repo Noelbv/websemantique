@@ -1,6 +1,6 @@
 import React from 'react';
 import SearchInput from './SearchInput';
-import Searchbutton from './Searchbutton';
+import SearchButton from './SearchButton';
 const NavBar = () => {
     return (
         <div className="bg-blacked fixed flex h-24 flex-row items-center w-full ">
@@ -8,7 +8,7 @@ const NavBar = () => {
                     Netfl'IF
                 </h1>
                 <SearchInput/>   
-                <Searchbutton />    
+                <SearchButton />    
         </div>
     );
 }

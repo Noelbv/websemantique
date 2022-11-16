@@ -1,13 +1,18 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context";
-const Searchbutton = () => {
+const SearchButton = () => {
 
   const context = useContext(AppContext);
   const navigate = useNavigate();
+  const [response, setResponse] = useState({apiResponse: "Rechercher"});
 
   const handleClick = () => {
-    navigate(`/search/key=${context.recherche}`);
+    // navigate(`/search/key=${context.recherche}`);
+	fetch("http://localhost:8000/testAPI")
+        .then(res => res.text())
+        .then(res => setResponse({ apiResponse: res }));
+
   }
 
   return (
@@ -16,9 +21,9 @@ const Searchbutton = () => {
       onClick={handleClick}
       className="rounded-tr-lg rounded-br-lg h-12 text-white bg-rose-900 flex place-items-center pl-4 pr-4 font-poppins"
     >
-      Rechercher
+      {response.apiResponse}
     </button>
   );
 }
 
-export default Searchbutton;
+export default SearchButton;
