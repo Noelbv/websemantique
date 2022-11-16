@@ -2,14 +2,14 @@ import React, { useState, useMemo } from "react";
 import AppContext from "./context";
 
 const AppProvider = (props) => {
-  const [test, setTest] = useState(null);
+  const [recherche, setRecherche] = useState("");
 
   const appContext = useMemo(
     () => ({
-      test,
-      setTest,
+      recherche,
+      setRecherche,
     }),
-    [test, setTest]
+    [recherche, setRecherche]
   );
 
   return (
