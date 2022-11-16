@@ -15,9 +15,19 @@
 
 class ApiService {
 
+  static getMovie = async (idMovie) => {
+    const response = await fetch(
+        `/getmovie?id=${idMovie}`
+        );
+    return response.json();
+    // .then(res => res.text())
+    // .then(res => setResponse({ apiResponse: res }));
+
+  }
+
   static getSearchFilm = async (stringSearch) => {
     const response = await fetch(
-        `http://localhost:8000/search?input=${stringSearch}`
+        `/search?input=${stringSearch}`
         );
     return response.json();
     // .then(res => res.text())

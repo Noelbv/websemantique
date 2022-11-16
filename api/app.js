@@ -7,6 +7,7 @@ var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var searchFilmRouter = require('./routes/searchFilmAPI');
+var getMovieRouter = require('./routes/getMovieAPI');
 var testAPIRouter = require('./routes/testAPI');
 
 
@@ -25,6 +26,7 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/search', searchFilmRouter);
+app.use("/movie", getMovieRouter);
 app.use("/testAPI", testAPIRouter);
 
 // catch 404 and forward to error handler
