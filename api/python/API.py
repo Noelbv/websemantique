@@ -11,29 +11,26 @@ class SPARQLCall:
 
     def get_Film(self, id):
         query = """
-                select ?instance ?titre ?partof ?genre ?country ?date ?director ?screenwriter ?cast ?photograph ?composer ?producer ?production ?duration ?review where
+               select ?instance ?titre ?partoflabel ?directorlabel ?countrylabel ?datelist where
                 {
-                %()s wdt:P31 ?instance;
+                wd:Q14650496 wdt:P31 ?instance;
                              wdt:P1476 ?titre;
                              wdt:P179 ?partof;
-                             wdt:P136 ?genre;
                              wdt:P495 ?country;
-                             wdt:P577 ?date;
                              wdt:P57 ?director;
-                             wdt:P58 ?screenwriter;
-                             wdt:P161 ?cast;
-                             wdt:P344 ?photograph;
-                             wdt:P86 ?composer;
-                             wdt:P162 ?producer;
-                             wdt:P272 ?production;
-                             wdt:P2047 ?duration;
-                             wdt:P444 ?review.
-                } LIMIT 1
+                             p:P577 ?datelist.
+                  ?datelist pq:P291 wd:Q30.
+                  ?partof rdfs:label ?partoflabel.
+                  ?director rdfs:label ?directorlabel.
+                  ?country rdfs:label ?countrylabel.
+                  VALUES ?instance {wd:Q11424}
+                  FILTER ((lang(?partoflabel)="en") && (lang(?countrylabel)="en")  && (lang(?directorlabel)="en") )
+                }
                         """.replace("%()s", id)
         self.sparql.setQuery(query)
         try:
             ret = self.sparql.queryAndConvert()
-            return Utils.construct_film(ret)
+            return Utils.construct_film(ret, id)
         except Exception as e:
             print(e)
 
