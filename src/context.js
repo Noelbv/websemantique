@@ -1,8 +1,8 @@
 import React from "react";
 
 const AppContext = React.createContext({
-  test: null,
-  setTest: () => null,
+  recherche: null,
+  setRecherche: () => null,
 });
 
 export default AppContext;

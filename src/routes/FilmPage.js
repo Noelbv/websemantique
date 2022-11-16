@@ -3,7 +3,7 @@ import Rating from "@mui/material/Rating";
 
 import NavBar from "../components/NavBar";
 // page qui donne les infos d'un film
-const FilmPage = (film) => {
+const FilmPage = () => {	
   // const [linkImage, setLinkImage] = useState("");
   // setLinkImage("https://static01.nyt.com/images/2013/12/27/multimedia/movies-wolf-12272013/movies-wolf-12272013-superJumbo.jpg")
   return (
