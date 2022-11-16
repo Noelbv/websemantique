@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context";
+import ApiService from '../AppService';
+
 const SearchButton = () => {
 
   const context = useContext(AppContext);
@@ -8,10 +10,10 @@ const SearchButton = () => {
   const [response, setResponse] = useState({apiResponse: "Rechercher"});
 
   const handleClick = () => {
-    // navigate(`/search/key=${context.recherche}`);
-	fetch("http://localhost:8000/testAPI")
-        .then(res => res.text())
-        .then(res => setResponse({ apiResponse: res }));
+  //   // navigate(`/search/key=${context.recherche}`);
+  console.log(ApiService.getSearchFilm(context.recherche));
+  //       .then(res => res.text())
+  //       .then(res => setResponse({ apiResponse: res }));
 
   }
 
