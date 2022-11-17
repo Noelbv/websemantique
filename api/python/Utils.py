@@ -33,21 +33,40 @@ def construct_list_films(ret):
     return json.dumps(result)
 
 
-def construct_film(ret, id):
+def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_comp, ret_dur_review):
     r = ret["results"]["bindings"][0]
     titre = r['titre']['value']
     country = r['countrylabel']['value']
     director = r['directorlabel']['value']
-    screenwriter = ""
-    photograph = ""
+
     part_of_serie = ""
     if 'partoflabel' in r:
         part_of_serie = r['partoflabel']['value']
-    pub_date = r['datelist']['value']
-    cast_member = ""
-    production_company = ""
+
+    pub_date = ret_dur_review["results"]["bindings"][0]['datelabel']['value']
     duration = ""
-    review = ""
+    review = ret_dur_review["results"]["bindings"][0]['label']['value']
+
+    genres = []
+    for r in ret_genre["results"]["bindings"]:
+        genres.append(r['genrelabel']['value'])
+
+    cast_member = []
+    for r in ret_cast["results"]["bindings"]:
+        cast_member.append(r['objectlabel']['value'])
+
+
+    screenwriter = []
+    for r in ret_scen["results"]["bindings"]:
+        screenwriter.append(r['objectlabel']['value'])
+
+    photograph = []
+    for r in ret_photo["results"]["bindings"]:
+        photograph.append(r['objectlabel']['value'])
+
+    production_company = []
+    for r in ret_prod_comp["results"]["bindings"]:
+        production_company.append(r['objectlabel']['value'])
 
     query = """
             SELECT ?pageid WHERE {
@@ -88,8 +107,6 @@ def construct_film(ret, id):
             img = i
             break
 
-    # title, part_of_series, country, pub_date, director, screenwriter, cast_member,
-    # director_photography, production_company, duration, review, resume, photo):
     f = Film(titre, part_of_serie, country, pub_date, director, screenwriter, cast_member, photograph,
-             production_company, duration, review, plot, img)
+             production_company, duration, review, plot, img, genres)
     return json.dumps(f, cls=FilmEncoder)
