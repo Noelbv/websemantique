@@ -12,7 +12,7 @@ const ROUTES = [
         element: <HomePage />,
     },
     {
-        path: "/search/key=:key",
+        path: "/search/:input",
         key: RouteKey.SEARCH_PAGE,
         exact: true,
         element: <SearchPage />,

@@ -3,9 +3,11 @@ import FilmBox from './FilmBox';
 const Categorie = (props) => {
 
     return (
-        <div className="container font-sans bg-white rounded-xl shadow h-1/2 p-8 m-10">
-        {props.name}
-        <FilmBox />
+        <div className="container mx-auto font-poppins rounded-xl text-white h-60 px-8 pt-2">
+        <div className="text-lg font-medium pb-2">
+          {props.name}
+        </div>
+        <FilmBox title="Harry Potter" duration="2h30"/>
       </div>
     );
 }
