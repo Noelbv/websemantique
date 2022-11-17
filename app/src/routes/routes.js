@@ -18,7 +18,7 @@ const ROUTES = [
         element: <SearchPage />,
     },
     {
-        path: "/film",
+        path: "/film/:title",
         key: RouteKey.FILM_PAGE,
         exact: true,
         element: <FilmPage />,
