@@ -2,7 +2,7 @@ from json import JSONEncoder
 
 
 class Human:
-    def __init__(self, name, sex, image, country, birth, occupation, prenoms):
+    def __init__(self, name, sex, image, country, birth, occupation, prenoms, films):
         self.name = name
         self.prenoms = prenoms
         self.sex = sex
@@ -10,7 +10,7 @@ class Human:
         self.country = country
         self.birth = birth
         self.occupation = occupation
-
+        self.movies = films
 
 # subclass JSONEncoder
 class HumanEncoder(JSONEncoder):

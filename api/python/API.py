@@ -53,6 +53,34 @@ class SPARQLCall:
           FILTER(((LANG(?firstnamelabel)) = "en"))
         }""".replace("%()s", id)
 
+        query_movies = """
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        select distinct ?f ?flabel where
+        {{
+        ?f ?membertype %()s;
+          p:P444 ?review;
+          wdt:P31 wd:Q11424.
+        ?review pq:P459 wd:Q108403540.
+        ?f wdt:P444 ?reviewlabel;
+           rdfs:label ?flabel.
+        VALUES ?membertype { wdt:P161 wd:P57 wd:P58 wd:P344 wd:P86 wd:P162}
+          FILTER ((lang(?flabel)="en"))
+        LET (?stringnote := STRBEFORE(?reviewlabel, "/")).
+        LET (?floatnote := xsd:float(?stringnote)).
+        }
+        UNION
+        {
+          ?f ?membertype %()s;
+          rdfs:label ?flabel;
+          wdt:P31 wd:Q11424.
+          VALUES ?membertype { wdt:P161 wd:P57 wd:P58 wd:P344 wd:P86 wd:P162}
+          FILTER NOT EXISTS {?f p:P444/pq:P459 wd:Q108403540}
+          FILTER ((lang(?flabel)="en"))
+        
+        }} 
+        ORDER BY DESC(?floatnote)
+        LIMIT 5""".replace("%()s", id)
+
         try:
             self.sparql.setQuery(query)
             ret = self.sparql.queryAndConvert()
@@ -62,7 +90,9 @@ class SPARQLCall:
             ret_metier = self.sparql.queryAndConvert()
             self.sparql.setQuery(query_prenoms)
             ret_prenoms = self.sparql.queryAndConvert()
-            return Utils.construct_human(ret, id, ret_country, ret_metier, ret_prenoms)
+            self.sparql.setQuery(query_movies)
+            ret_movies = self.sparql.queryAndConvert()
+            return Utils.construct_human(ret, id, ret_country, ret_metier, ret_prenoms, ret_movies)
         except Exception as e:
             print(e)
 

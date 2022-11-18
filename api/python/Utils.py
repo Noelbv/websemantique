@@ -87,9 +87,12 @@ def construct_list_films(ret):
     return json.dumps(result)
 
 
-def construct_human(ret, id, ret_country, ret_metier, ret_prenoms):
+def construct_human(ret, id, ret_country, ret_metier, ret_prenoms, ret_movies):
     r = ret["results"]["bindings"][0]
     r_c = ret_country["results"]["bindings"][0]
+    movies = []
+    for m in ret_movies["results"]["bindings"]:
+        movies.append([m['flabel']['value'], "wd:" + m['f']['value'].split("/")[-1]])
     prenoms = []
     for r_p in ret_prenoms["results"]["bindings"]:
         prenoms.append(r_p['firstnamelabel']['value'])
@@ -143,7 +146,7 @@ def construct_human(ret, id, ret_country, ret_metier, ret_prenoms):
     else:
         img = imgs[0]
 
-    h = Human(name, sexe, img, country, birth, metiers, prenoms)
+    h = Human(name, sexe, img, country, birth, metiers, prenoms, movies)
     return json.dumps(h, cls=HumanEncoder)
 
 
