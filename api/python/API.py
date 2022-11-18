@@ -9,6 +9,63 @@ class SPARQLCall:
         )
         self.sparql.setReturnFormat(JSON)
 
+    def get_Human(self, id):
+        query = """
+        select ?instancelabel ?genrelabel ?date where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P21 ?genre;
+                     wdt:P569 ?date.
+          ?instance rdfs:label ?instancelabel.
+          ?genre rdfs:label ?genrelabel.
+          FILTER ((lang(?instancelabel)="en") && (lang(?genrelabel)="en") )
+        }
+        """.replace("%()s", id)
+
+        # Genre
+        query_country = """
+        SELECT ?countrylabel ?namelabel WHERE {
+          %()s wdt:P27 ?country;
+            wdt:P734 ?name.
+          ?country rdfs:label ?countrylabel.
+          ?name rdfs:label ?namelabel.
+          FILTER(((LANG(?namelabel)) = "en") && ((LANG(?countrylabel)) = "en"))
+        }
+        """.replace("%()s", id)
+
+        #Metiers
+        query_metier = """
+        select  ?label where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P106?occupation.
+          ?occupation rdfs:label ?label.
+          VALUES ?instance {wd:Q5}
+          FILTER ((lang(?label)="en") )
+        }
+        """.replace("%()s", id)
+
+        # Prenoms
+        query_prenoms = """
+        SELECT ?firstnamelabel WHERE {
+          %()s wdt:P735 ?firstname.
+          ?firstname rdfs:label ?firstnamelabel.
+          FILTER(((LANG(?firstnamelabel)) = "en"))
+        }""".replace("%()s", id)
+
+        try:
+            self.sparql.setQuery(query)
+            ret = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_country)
+            ret_country = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_metier)
+            ret_metier = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_prenoms)
+            ret_prenoms = self.sparql.queryAndConvert()
+            return Utils.construct_human(ret, id, ret_country, ret_metier, ret_prenoms)
+        except Exception as e:
+            print(e)
+
     def get_Film_Series(self, id):
         query = """
         select ?instancelabel ?titre ?countrylabel ?producerlabel  where

@@ -7,6 +7,53 @@ from bs4 import BeautifulSoup
 import requests
 
 from FilmSeries import FilmSeries
+from Human import Human, HumanEncoder
+
+
+def get_image_from_wikipedia(id, words):
+    query = """
+                    SELECT ?pageid WHERE {
+                    VALUES (?item) {(%()s)} 
+                    [ schema:about ?item ; schema:name ?name ;
+                      schema:isPartOf <https://en.wikipedia.org/> ]
+                     SERVICE wikibase:mwapi {
+                         bd:serviceParam wikibase:endpoint "en.wikipedia.org" .
+                         bd:serviceParam wikibase:api "Generator" .
+                         bd:serviceParam mwapi:generator "allpages" .
+                         bd:serviceParam mwapi:gapfrom ?name .
+                         bd:serviceParam mwapi:gapto ?name .
+                         ?pageid wikibase:apiOutput "@pageid" .
+                    }
+                }""".replace("%()s", id)
+    sparql = SPARQLWrapper(
+        "https://query.wikidata.org/sparql"
+    )
+    sparql.setReturnFormat(JSON)
+    sparql.setQuery(query)
+    url = ""
+    """try:
+        url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
+        print(sparql.queryAndConvert()['results']['bindings'])
+    except Exception as e:
+        print(e)
+
+    get_url = requests.get(url)
+    get_text = get_url.text
+    soup = BeautifulSoup(get_text, "html.parser")
+    title = soup.find_all(["h1"])[0].get_text()
+
+    p = wikipedia.page(title, auto_suggest=False)
+
+    imgs = p.images
+
+    for i in imgs:
+        if any(ext in i for ext in words):
+            img = i
+            break
+    else:
+        img = imgs[0]
+    return img"""
+    return ""
 
 
 def construct_separated_list_of_result(ret):
@@ -14,12 +61,16 @@ def construct_separated_list_of_result(ret):
     films = []
     films_series = []
     for r in ret["results"]["bindings"]:
-        res = {"link": r['object']["value"], "name": r['objectlabel']["value"]}
+        id = "wd:" + r['object']["value"].split("/")[-1]
+        res = {"id": id, "name": r['objectlabel']["value"]}
         if r['objectinstance']['value'] == 'http://www.wikidata.org/entity/Q5':
+            res["image"] = get_image_from_wikipedia(id, r['objectlabel']["value"].split(" "))
             persons.append(res)
         elif r['objectinstance']['value'] == 'http://www.wikidata.org/entity/Q24856':
+            res["image"] = get_image_from_wikipedia(id, ["poster", "logo", "wordmark"])
             films_series.append(res)
         elif r['objectinstance']['value'] == 'http://www.wikidata.org/entity/Q11424':
+            res["image"] = get_image_from_wikipedia(id, ["poster"])
             films.append(res)
 
     result = {"personnes": persons, "films": films, "film_series": films_series}
@@ -34,6 +85,67 @@ def construct_list_films(ret):
 
     result = {"films": films}
     return json.dumps(result)
+
+
+def construct_human(ret, id, ret_country, ret_metier, ret_prenoms):
+    r = ret["results"]["bindings"][0]
+    r_c = ret_country["results"]["bindings"][0]
+    prenoms = []
+    for r_p in ret_prenoms["results"]["bindings"]:
+        prenoms.append(r_p['firstnamelabel']['value'])
+
+    name = r_c['namelabel']['value']
+    sexe = r['genrelabel']['value']
+    country = r_c['countrylabel']['value']
+    birth = r['date']['value']
+    r_m = ret_metier["results"]["bindings"]
+    metiers = []
+    for r_i in r_m:
+        metiers.append(r_i['label']['value'])
+    query = """
+                    SELECT ?pageid WHERE {
+                    VALUES (?item) {(%()s)} 
+                    [ schema:about ?item ; schema:name ?name ;
+                      schema:isPartOf <https://en.wikipedia.org/> ]
+                     SERVICE wikibase:mwapi {
+                         bd:serviceParam wikibase:endpoint "en.wikipedia.org" .
+                         bd:serviceParam wikibase:api "Generator" .
+                         bd:serviceParam mwapi:generator "allpages" .
+                         bd:serviceParam mwapi:gapfrom ?name .
+                         bd:serviceParam mwapi:gapto ?name .
+                         ?pageid wikibase:apiOutput "@pageid" .
+                    }
+                }""".replace("%()s", id)
+    sparql = SPARQLWrapper(
+        "https://query.wikidata.org/sparql"
+    )
+    sparql.setReturnFormat(JSON)
+    sparql.setQuery(query)
+    try:
+        url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
+    except Exception as e:
+        print(e)
+
+    get_url = requests.get(url)
+    get_text = get_url.text
+    soup = BeautifulSoup(get_text, "html.parser")
+    title = soup.find_all(["h1"])[0].get_text()
+
+    p = wikipedia.page(title, auto_suggest=False)
+
+    imgs = p.images
+    img = ""
+    elements = name.split(" ")
+    for i in imgs:
+        if any(ext in i for ext in elements):
+            img = i
+            break
+    else:
+        img = imgs[0]
+
+    h = Human(name, sexe, img, country, birth, metiers, prenoms)
+    return json.dumps(h, cls=HumanEncoder)
+
 
 
 def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers):
@@ -92,6 +204,8 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers):
         if "poster" in i or "logo" in i or "wordmark" in i or title in i:
             img = i
             break
+    else:
+        img = imgs[0]
 
     # franchise ou logo ou le titre ou wordmark
     f = FilmSeries(titre, country, director, genre, producers, casting, resume, img)
@@ -170,6 +284,8 @@ def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_c
         if "poster" in i:
             img = i
             break
+    else:
+        img = imgs[0]
 
     f = Film(titre, part_of_serie, country, pub_date, director, screenwriter, cast_member, photograph,
              production_company, duration, review, plot, img, genres)
