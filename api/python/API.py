@@ -321,13 +321,15 @@ class SPARQLCall:
         """.replace("%()s", enter)
 
         try:
+            """"""
             self.sparql.setQuery(query_human)
             ret = self.sparql.queryAndConvert()
-            self.sparql.setQuery(query_serie)
+            """self.sparql.setQuery(query_serie)
             ret_serie = self.sparql.queryAndConvert()
+            """
             self.sparql.setQuery(query_movie)
             ret_movie = self.sparql.queryAndConvert()
-            return Utils.construct_separated_list_of_result(ret, ret_movie, ret_serie)
+            return Utils.construct_separated_list_of_result("", ret_movie, "")
         except Exception as e:
             print(e)
 

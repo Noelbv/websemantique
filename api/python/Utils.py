@@ -60,22 +60,22 @@ def construct_separated_list_of_result(ret, ret_movie, ret_serie):
     persons = []
     films = []
     films_series = []
-    for r in ret["results"]["bindings"]:
+    """for r in ret["results"]["bindings"]:
         id = "wd:" + r['object']["value"].split("/")[-1]
         res = {"id": id, "name": r['objectlabel']["value"]}
-        persons.append(res)
+        persons.append(res)"""
 
     for r in ret_movie["results"]["bindings"]:
         id = "wd:" + r['object']["value"].split("/")[-1]
         res = {"id": id, "name": r['objectlabel']["value"]}
         films.append(res)
-
+    """
     for r in ret_serie["results"]["bindings"]:
         id = "wd:" + r['object']["value"].split("/")[-1]
         res = {"id": id, "name": r['objectlabel']["value"]}
-        films_series.append(res)
+        films_series.append(res)"""
 
-    result = {"personnes": persons, "films": films, "film_series": films_series}
+    result = {"films": films}
     return json.dumps(result)
 
 
