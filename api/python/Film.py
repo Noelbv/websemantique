@@ -4,7 +4,7 @@ from json import JSONEncoder
 
 class Film:
     def __init__(self, title, part_of_series, country, pub_date, director, screenwriter, cast_member,
-                 director_photography, production_company, duration, review, resume, photo):
+                 director_photography, production_company, duration, review, resume, photo, genres):
         self.title = title
         self.part_of_series = part_of_series
         self.country = country
@@ -18,9 +18,8 @@ class Film:
         self.review = review
         self.resume = resume
         self.photo = photo
-        self.list_actors = []
         self.list_producers = []
-        self.list_genre = []
+        self.list_genre = genres
 
 
 # subclass JSONEncoder

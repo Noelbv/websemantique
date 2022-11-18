@@ -9,11 +9,163 @@ class SPARQLCall:
         )
         self.sparql.setReturnFormat(JSON)
 
+    def get_Human(self, id):
+        query = """
+        select ?instancelabel ?genrelabel ?date where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P21 ?genre;
+                     wdt:P569 ?date.
+          ?instance rdfs:label ?instancelabel.
+          ?genre rdfs:label ?genrelabel.
+          FILTER ((lang(?instancelabel)="en") && (lang(?genrelabel)="en") )
+        }
+        """.replace("%()s", id)
+
+        # Genre
+        query_country = """
+        SELECT ?countrylabel ?namelabel WHERE {
+          %()s wdt:P27 ?country;
+            wdt:P734 ?name.
+          ?country rdfs:label ?countrylabel.
+          ?name rdfs:label ?namelabel.
+          FILTER(((LANG(?namelabel)) = "en") && ((LANG(?countrylabel)) = "en"))
+        }
+        """.replace("%()s", id)
+
+        #Metiers
+        query_metier = """
+        select  ?label where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P106?occupation.
+          ?occupation rdfs:label ?label.
+          VALUES ?instance {wd:Q5}
+          FILTER ((lang(?label)="en") )
+        }
+        """.replace("%()s", id)
+
+        # Prenoms
+        query_prenoms = """
+        SELECT ?firstnamelabel WHERE {
+          %()s wdt:P735 ?firstname.
+          ?firstname rdfs:label ?firstnamelabel.
+          FILTER(((LANG(?firstnamelabel)) = "en"))
+        }""".replace("%()s", id)
+
+        query_movies = """
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        select distinct ?f ?flabel where
+        {{
+        ?f ?membertype %()s;
+          p:P444 ?review;
+          wdt:P31 wd:Q11424.
+        ?review pq:P459 wd:Q108403540.
+        ?f wdt:P444 ?reviewlabel;
+           rdfs:label ?flabel.
+        VALUES ?membertype { wdt:P161 wd:P57 wd:P58 wd:P344 wd:P86 wd:P162}
+          FILTER ((lang(?flabel)="en"))
+        LET (?stringnote := STRBEFORE(?reviewlabel, "/")).
+        LET (?floatnote := xsd:float(?stringnote)).
+        }
+        UNION
+        {
+          ?f ?membertype %()s;
+          rdfs:label ?flabel;
+          wdt:P31 wd:Q11424.
+          VALUES ?membertype { wdt:P161 wd:P57 wd:P58 wd:P344 wd:P86 wd:P162}
+          FILTER NOT EXISTS {?f p:P444/pq:P459 wd:Q108403540}
+          FILTER ((lang(?flabel)="en"))
+        
+        }} 
+        ORDER BY DESC(?floatnote)
+        LIMIT 5""".replace("%()s", id)
+
+        try:
+            self.sparql.setQuery(query)
+            ret = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_country)
+            ret_country = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_metier)
+            ret_metier = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_prenoms)
+            ret_prenoms = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_movies)
+            ret_movies = self.sparql.queryAndConvert()
+            return Utils.construct_human(ret, id, ret_country, ret_metier, ret_prenoms, ret_movies)
+        except Exception as e:
+            print(e)
+
+    def get_Film_Series(self, id):
+        query = """
+        select ?instancelabel ?titre ?countrylabel ?producerlabel  where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P1705 ?titre;
+                     wdt:P495 ?country;
+                     wdt:P162 ?producer.
+          ?country rdfs:label ?countrylabel.
+          ?instance rdfs:label ?instancelabel.
+          ?producer rdfs:label ?producerlabel.
+          VALUES ?instance {wd:Q24856}  
+          FILTER ((lang(?countrylabel)="en")  && (lang(?producerlabel)="en") && (lang(?instancelabel)="en"))
+        }
+        """.replace("%()s", id)
+
+        # Genres
+        query_genres = """
+        select  ?genrelabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P136 ?genre.
+          ?genre rdfs:label ?genrelabel.
+          VALUES ?instance {wd:Q24856}
+          FILTER ((lang(?genrelabel)="en") )
+        } LIMIT 10
+        """.replace("%()s", id)
+
+        # Casting
+        query_cast = """
+        select  ?objectlabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P161 ?list.
+          ?list rdfs:label ?objectlabel.
+          VALUES ?instance {wd:Q24856}
+          FILTER ((lang(?objectlabel)="en") )
+        } LIMIT 10
+        """.replace("%()s", id)
+
+        # Producers
+        query_producers = """
+        select  ?objectlabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P162 ?list.
+          ?list rdfs:label ?objectlabel.
+          VALUES ?instance {wd:Q24856}
+          FILTER ((lang(?objectlabel)="en") )
+        } LIMIT 10
+        """.replace("%()s", id)
+
+        try:
+            self.sparql.setQuery(query)
+            ret = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_genres)
+            ret_genres = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_cast)
+            ret_cast = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_producers)
+            ret_producer = self.sparql.queryAndConvert()
+            return Utils.construct_film_series(ret, id, ret_genres, ret_cast, ret_producer)
+        except Exception as e:
+            print(e)
+
     def get_Film(self, id):
         query = """
                select ?instance ?titre ?partoflabel ?directorlabel ?countrylabel ?datelist where
                 {
-                wd:Q14650496 wdt:P31 ?instance;
+                %()s wdt:P31 ?instance;
                              wdt:P1476 ?titre;
                              wdt:P179 ?partof;
                              wdt:P495 ?country;
@@ -27,10 +179,91 @@ class SPARQLCall:
                   FILTER ((lang(?partoflabel)="en") && (lang(?countrylabel)="en")  && (lang(?directorlabel)="en") )
                 }
                         """.replace("%()s", id)
-        self.sparql.setQuery(query)
+
+        # Genres
+        query_genres = """
+        select  ?genrelabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P136 ?genre.
+          ?genre rdfs:label ?genrelabel.
+          VALUES ?instance {wd:Q11424}
+          FILTER ((lang(?genrelabel)="en") )
+        }""".replace("%()s", id)
+
+        # Casting
+        query_cast = """
+        select  ?objectlabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P161 ?list.
+          ?list rdfs:label ?objectlabel.
+          VALUES ?instance {wd:Q11424}
+          FILTER ((lang(?objectlabel)="en") )
+        } LIMIT 10""".replace("%()s", id)
+
+        # Scénaristes
+        query_scenaristes = """
+        select  ?objectlabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P58 ?list.
+          ?list rdfs:label ?objectlabel.
+          VALUES ?instance {wd:Q11424}
+          FILTER ((lang(?objectlabel)="en") )
+        } LIMIT 5""".replace("%()s", id)
+
+        # Photographes
+        query_photo = """
+        select  ?objectlabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P344 ?list.
+          ?list rdfs:label ?objectlabel.
+          VALUES ?instance {wd:Q11424}
+          FILTER ((lang(?objectlabel)="en") )
+        }""".replace("%()s", id)
+
+        # Compagnies de production
+        query_production_comp = """
+        select  ?objectlabel where
+        {
+        %()s wdt:P31 ?instance;
+                     wdt:P272 ?list.
+          ?list rdfs:label ?objectlabel.
+          VALUES ?instance {wd:Q11424}
+          FILTER ((lang(?objectlabel)="en") )
+        }""".replace("%()s", id)
+
+        query_dur_review = """
+        select ?label ?datelabel where
+        {
+        %()s wdt:P31 ?instance;
+                     p:P444 ?node;
+                     p:P577 ?datenode.
+          ?node pq:P459 wd:Q108403540;
+           ps:P444 ?label.
+          ?datenode pq:P291 wd:Q30;
+                    ps:P577 ?datelabel.
+          VALUES ?instance {wd:Q11424}
+        }""".replace("%()s", id)
         try:
+            self.sparql.setQuery(query)
             ret = self.sparql.queryAndConvert()
-            return Utils.construct_film(ret, id)
+            self.sparql.setQuery(query_genres)
+            ret_genres = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_cast)
+            ret_cast = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_scenaristes)
+            ret_scen = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_photo)
+            ret_photo = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_production_comp)
+            ret_prod_comp = self.sparql.queryAndConvert()
+            self.sparql.setQuery(query_dur_review)
+            ret_dur_review = self.sparql.queryAndConvert()
+            return Utils.construct_film(ret, id, ret_genres, ret_cast, ret_scen, ret_photo, ret_prod_comp,
+                                        ret_dur_review)
         except Exception as e:
             print(e)
 
@@ -48,7 +281,7 @@ class SPARQLCall:
         except Exception as e:
             print(e)
 
-    def get_result_search(self, enter):
+    def get_result_search(self, enter, limit):
         query = """
         select distinct ?object ?objectlabel ?objectinstance where
         {
@@ -70,8 +303,8 @@ class SPARQLCall:
         VALUES ?objectinstance { wd:Q5 wd:Q24856 wd:Q11424 }
         FILTER ((lang(?objectlabel)="en") && regex(?objectlabel, "%()s"))
         }
-        LIMIT 5
-        """.replace("%()s", enter)
+        LIMIT %(limit)s
+        """.replace("%()s", enter).replace("%(limit)s", limit)
         self.sparql.setQuery(query)
         try:
             ret = self.sparql.queryAndConvert()
