@@ -11,7 +11,7 @@ def main():
         if len(sys.argv) > 3:
             print(a.get_result_search(sys.argv[2], sys.argv[3]))
         else:
-            print(a.get_result_search(sys.argv[2], 5))
+            print(a.get_result_search(sys.argv[2], "5"))
     elif fct == "1":
         # Récupérer les films d'une série
         print(a.get_all_movies_of_serie(sys.argv[2]))

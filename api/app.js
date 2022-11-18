@@ -8,8 +8,8 @@ var cors = require('cors');
 var indexRouter = require('./routes/index');
 var searchFilmRouter = require('./routes/searchFilmAPI');
 var getMovieRouter = require('./routes/getMovieAPI');
-var testAPIRouter = require('./routes/testAPI');
-
+var getSeriesRouter = require('./routes/getSeriesAPI');
+var getActorRouter = require('./routes/getActorAPI');
 
 var app = express();
 
@@ -27,7 +27,8 @@ app.use(cors());
 app.use('/', indexRouter);
 app.use('/search', searchFilmRouter);
 app.use("/movie", getMovieRouter);
-app.use("/testAPI", testAPIRouter);
+app.use("/series", getSeriesRouter);
+app.use("/actor", getActorRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
