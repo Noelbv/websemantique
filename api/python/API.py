@@ -251,7 +251,7 @@ class SPARQLCall:
         except Exception as e:
             print(e)
 
-    def get_result_search(self, enter):
+    def get_result_search(self, enter, limit):
         query = """
         select distinct ?object ?objectlabel ?objectinstance where
         {
@@ -273,8 +273,8 @@ class SPARQLCall:
         VALUES ?objectinstance { wd:Q5 wd:Q24856 wd:Q11424 }
         FILTER ((lang(?objectlabel)="en") && regex(?objectlabel, "%()s"))
         }
-        LIMIT 5
-        """.replace("%()s", enter)
+        LIMIT %(limit)s
+        """.replace("%()s", enter).replace("%(limit)s", limit)
         self.sparql.setQuery(query)
         try:
             ret = self.sparql.queryAndConvert()
