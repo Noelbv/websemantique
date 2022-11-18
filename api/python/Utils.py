@@ -56,22 +56,24 @@ def get_image_from_wikipedia(id, words):
     return ""
 
 
-def construct_separated_list_of_result(ret):
+def construct_separated_list_of_result(ret, ret_movie, ret_serie):
     persons = []
     films = []
     films_series = []
     for r in ret["results"]["bindings"]:
         id = "wd:" + r['object']["value"].split("/")[-1]
         res = {"id": id, "name": r['objectlabel']["value"]}
-        if r['objectinstance']['value'] == 'http://www.wikidata.org/entity/Q5':
-            res["image"] = get_image_from_wikipedia(id, r['objectlabel']["value"].split(" "))
-            persons.append(res)
-        elif r['objectinstance']['value'] == 'http://www.wikidata.org/entity/Q24856':
-            res["image"] = get_image_from_wikipedia(id, ["poster", "logo", "wordmark"])
-            films_series.append(res)
-        elif r['objectinstance']['value'] == 'http://www.wikidata.org/entity/Q11424':
-            res["image"] = get_image_from_wikipedia(id, ["poster"])
-            films.append(res)
+        persons.append(res)
+
+    for r in ret_movie["results"]["bindings"]:
+        id = "wd:" + r['object']["value"].split("/")[-1]
+        res = {"id": id, "name": r['objectlabel']["value"]}
+        films.append(res)
+
+    for r in ret_serie["results"]["bindings"]:
+        id = "wd:" + r['object']["value"].split("/")[-1]
+        res = {"id": id, "name": r['objectlabel']["value"]}
+        films_series.append(res)
 
     result = {"personnes": persons, "films": films, "film_series": films_series}
     return json.dumps(result)
@@ -211,7 +213,7 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers):
         img = imgs[0]
 
     # franchise ou logo ou le titre ou wordmark
-    f = FilmSeries(titre, country, director, genre, producers, casting, resume, img)
+    f = FilmSeries(titre, genre, director, country, producers, casting, resume, img)
     return json.dumps(f, cls=FilmSeriesEncoder)
 
 
