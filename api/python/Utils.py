@@ -309,3 +309,15 @@ def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_c
     f = Film(titre, part_of_serie, country, pub_date, director, screenwriter, cast_member, photograph,
              production_company, duration, review, plot, img, genres)
     return json.dumps(f, cls=FilmEncoder)
+
+
+def construct_list_genres(ret, genres):
+    list_of = [[], [], [], []]
+    i = 0
+    for ru in ret:
+        ri = ru['results']['bindings']
+        for r in ri:
+            list_of[i].append([r['flabel']['value'], r['f']['value'].split("/")[-1]])
+        i += 1
+    result = dict(zip(genres, list_of))
+    print(result)

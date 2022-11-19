@@ -371,3 +371,45 @@ class SPARQLCall:
             return Utils.construct_list_films(ret)
         except Exception as e:
             print(e)
+
+    def get_top_films_by_genre(self):
+        list_genres = [
+            ["Comedy", "wd:Q157443"],
+            ["Horror", "wd:Q200092"],
+            ["Action", "wd:Q188473"],
+            ["Drama", "wd:Q130232"]
+        ]
+
+        query = """
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        select distinct ?f ?flabel where
+        {
+          {
+            ?f ?genre %()s;
+              p:P444 ?review;
+              wdt:P577 ?date;
+              wdt:P31 wd:Q11424.
+            ?review pq:P459 wd:Q108403540.
+            ?f wdt:P444 ?reviewlabel;
+              rdfs:label ?flabel.
+            LET (?stringnote := STRBEFORE(?reviewlabel, "/")).
+            LET (?floatnote := xsd:float(?stringnote)).
+            FILTER ((lang(?flabel)="en") && ?floatnote > 7.5)    
+          }
+        }
+        ORDER BY desc(?date)
+        LIMIT 3
+        """
+
+        rets = []
+        genres = ["Comedy", "Horror", "Action", "Drama"]
+
+        for [_, genre_id] in list_genres:
+            try:
+                self.sparql.setQuery(query.replace("%()s", genre_id))
+                ret = self.sparql.queryAndConvert()
+                rets.append(ret)
+            except Exception as e:
+                print(e)
+        return Utils.construct_list_genres(rets, genres)
+

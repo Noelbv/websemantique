@@ -27,6 +27,9 @@ def main():
     elif fct == "5":
         # Récupérer les infos d'un humain par son ID
         print(a.get_Human(sys.argv[2]))
+    elif fct == "6":
+        # Récupérer les films par genre
+        print(a.get_top_films_by_genre())
 
 
 main()
