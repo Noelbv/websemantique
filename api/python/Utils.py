@@ -65,7 +65,7 @@ def construct_separated_list_of_result(ret, ret_movie, ret_serie):
         res = {"id": id, "name": r['objectlabel']["value"]}
         persons.append(res)
 
-    """for r in ret_movie["results"]["bindings"]:
+    for r in ret_movie["results"]["bindings"]:
         id = "wd:" + r['object']["value"].split("/")[-1]
         res = {"id": id, "name": r['objectlabel']["value"]}
         films.append(res)
@@ -74,8 +74,8 @@ def construct_separated_list_of_result(ret, ret_movie, ret_serie):
         id = "wd:" + r['object']["value"].split("/")[-1]
         res = {"id": id, "name": r['objectlabel']["value"]}
         films_series.append(res)
-"""
-    result = {"personnes": persons}
+
+    result = {"personnes": persons, "films": films, "film_series": films_series}
     return json.dumps(result)
 
 
@@ -221,13 +221,13 @@ def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_c
     r = ret["results"]["bindings"][0]
     titre = r['titre']['value']
     country = r['countrylabel']['value']
-    director = r['directorlabel']['value']
+    director = [r['directorlabel']['value'], "wd:" + r['director']['value'].split("/")[-1]]
 
     part_of_serie = ""
     if 'partoflabel' in r:
         part_of_serie = r['partoflabel']['value']
 
-    pub_date = ret_dur_review["results"]["bindings"][0]['datelabel']['value']
+    pub_date = ret_dur_review["results"]["bindings"][0]['datenode']['value']
     duration = ""
     review = ret_dur_review["results"]["bindings"][0]['label']['value']
 
@@ -237,15 +237,15 @@ def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_c
 
     cast_member = []
     for r in ret_cast["results"]["bindings"]:
-        cast_member.append(r['objectlabel']['value'])
+        cast_member.append([r['objectlabel']['value'], r['list']['value'].split("/")[-1]])
 
     screenwriter = []
     for r in ret_scen["results"]["bindings"]:
-        screenwriter.append(r['objectlabel']['value'])
+        screenwriter.append([r['objectlabel']['value'], r['list']['value'].split("/")[-1]])
 
     photograph = []
     for r in ret_photo["results"]["bindings"]:
-        photograph.append(r['objectlabel']['value'])
+        photograph.append([r['objectlabel']['value'], r['list']['value'].split("/")[-1]])
 
     production_company = []
     for r in ret_prod_comp["results"]["bindings"]:

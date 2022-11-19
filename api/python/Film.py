@@ -18,7 +18,6 @@ class Film:
         self.review = review
         self.resume = resume
         self.photo = photo
-        self.list_producers = []
         self.list_genre = genres
 
 

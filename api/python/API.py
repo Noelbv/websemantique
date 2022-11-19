@@ -163,90 +163,86 @@ class SPARQLCall:
 
     def get_Film(self, id):
         query = """
-               select ?instance ?titre ?partoflabel ?directorlabel ?countrylabel ?datelist where
+               select distinct ?instance ?titre ?partoflabel ?director ?directorlabel ?countrylabel where
                 {
                 %()s wdt:P31 ?instance;
                              wdt:P1476 ?titre;
-                             wdt:P179 ?partof;
                              wdt:P495 ?country;
-                             wdt:P57 ?director;
-                             p:P577 ?datelist.
-                  ?datelist pq:P291 wd:Q30.
-                  ?partof rdfs:label ?partoflabel.
+                             wdt:P57 ?director.
                   ?director rdfs:label ?directorlabel.
-                  ?country rdfs:label ?countrylabel.
-                  VALUES ?instance {wd:Q11424}
-                  FILTER ((lang(?partoflabel)="en") && (lang(?countrylabel)="en")  && (lang(?directorlabel)="en") )
-                }
-                        """.replace("%()s", id)
+                  ?country rdfs:label ?countrylabel.  
+                  OPTIONAL {%(1)s wdt:P179 ?partof.
+                            ?partof rdfs:label ?partoflabel.
+                            FILTER (lang(?partoflabel)="en")}
+                  FILTER ((lang(?countrylabel)="en")  && (lang(?directorlabel)="en") )
+                }limit 1
+                        """.replace("%()s", id).replace("%(1)s", id)
 
         # Genres
         query_genres = """
-        select  ?genrelabel where
+        select distinct  ?genrelabel where
         {
         %()s wdt:P31 ?instance;
                      wdt:P136 ?genre.
           ?genre rdfs:label ?genrelabel.
-          VALUES ?instance {wd:Q11424}
+          VALUES ?instance {wd:Q11424 wd:Q24869 wd:Q229390}
           FILTER ((lang(?genrelabel)="en") )
         }""".replace("%()s", id)
 
         # Casting
         query_cast = """
-        select  ?objectlabel where
+        select distinct ?list ?objectlabel where
         {
         %()s wdt:P31 ?instance;
                      wdt:P161 ?list.
           ?list rdfs:label ?objectlabel.
-          VALUES ?instance {wd:Q11424}
+          VALUES ?instance {wd:Q11424  wd:Q24869 wd:Q229390}
           FILTER ((lang(?objectlabel)="en") )
         } LIMIT 10""".replace("%()s", id)
 
         # Scénaristes
         query_scenaristes = """
-        select  ?objectlabel where
+        select distinct ?list ?objectlabel where
         {
         %()s wdt:P31 ?instance;
                      wdt:P58 ?list.
           ?list rdfs:label ?objectlabel.
-          VALUES ?instance {wd:Q11424}
+          VALUES ?instance {wd:Q11424 wd:Q24869 wd:Q229390}
           FILTER ((lang(?objectlabel)="en") )
         } LIMIT 5""".replace("%()s", id)
 
         # Photographes
         query_photo = """
-        select  ?objectlabel where
+        select distinct ?list ?objectlabel where
         {
         %()s wdt:P31 ?instance;
                      wdt:P344 ?list.
           ?list rdfs:label ?objectlabel.
-          VALUES ?instance {wd:Q11424}
+          VALUES ?instance {wd:Q11424 wd:Q24869 wd:Q229390}
           FILTER ((lang(?objectlabel)="en") )
-        }""".replace("%()s", id)
+        } LIMIT 5""".replace("%()s", id)
 
         # Compagnies de production
         query_production_comp = """
-        select  ?objectlabel where
+        select distinct ?objectlabel where
         {
         %()s wdt:P31 ?instance;
                      wdt:P272 ?list.
           ?list rdfs:label ?objectlabel.
-          VALUES ?instance {wd:Q11424}
+          VALUES ?instance {wd:Q11424 wd:Q24869 wd:Q229390} 
           FILTER ((lang(?objectlabel)="en") )
-        }""".replace("%()s", id)
+        } LIMIT 5""".replace("%()s", id)
 
         query_dur_review = """
-        select ?label ?datelabel where
+       select distinct ?label ?datenode where
         {
         %()s wdt:P31 ?instance;
                      p:P444 ?node;
-                     p:P577 ?datenode.
+                     wdt:P577 ?datenode.
           ?node pq:P459 wd:Q108403540;
            ps:P444 ?label.
-          ?datenode pq:P291 wd:Q30;
-                    ps:P577 ?datelabel.
-          VALUES ?instance {wd:Q11424}
-        }""".replace("%()s", id)
+          VALUES ?instance {wd:Q11424 wd:Q24869 wd:Q229390}
+        } LIMIT 1""".replace("%()s", id)
         try:
             self.sparql.setQuery(query)
             ret = self.sparql.queryAndConvert()
@@ -324,12 +320,11 @@ class SPARQLCall:
 
             self.sparql.setQuery(query_human)
             ret = self.sparql.queryAndConvert()
-            """self.sparql.setQuery(query_serie)
+            self.sparql.setQuery(query_serie)
             ret_serie = self.sparql.queryAndConvert()
-            
             self.sparql.setQuery(query_movie)
-            ret_movie = self.sparql.queryAndConvert()"""
-            return Utils.construct_separated_list_of_result(ret, "", "")
+            ret_movie = self.sparql.queryAndConvert()
+            return Utils.construct_separated_list_of_result(ret, ret_movie, ret_serie)
         except Exception as e:
             print(e)
 
