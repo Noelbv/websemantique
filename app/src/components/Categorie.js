@@ -1,15 +1,25 @@
 import React from 'react';
 import FilmBox from './FilmBox';
+import "./Categories.css";
 const Categorie = (props) => {
-
-    return (
-        <div className="container mx-auto font-poppins rounded-xl text-white h-60 px-8 pt-2">
-        <div className="text-lg font-medium pb-2">
-          {props.name}
-        </div>
-        <FilmBox title="Harry Potter" duration="2h30"/>
+  return (
+      <div className=" font-poppins rounded-xl text-white px-8 ">
+      <div className="flex flex-col m-auto p-auto">
+      <h1 className="flex pb-5 px-2 font-bold text-4xl text-white">
+              {props.name}
+            </h1>
+            <div className="flex overflow-x-auto pb-10 hide-scroll-bar">
+              <div className="flex flex-nowrap">
+              {props.listFilms.map((item, index) => {
+                  return <FilmBox  key={index} title={item.title} duration={item.duration}/>
+                })
+              }
+              </div>
+            </div>
       </div>
-    );
+      </div>
+  );
+      
 }
- 
+
 export default Categorie;
