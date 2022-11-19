@@ -2,10 +2,10 @@ from json import JSONEncoder
 
 
 class FilmSeries:
-    def __init__(self, title, genre, director, country, producer, cast, resume, img):
+    def __init__(self, title, genre, country, producer, cast, resume, img, movies):
         self.title = title
+        self.movies = movies
         self.genre = genre
-        self.director = director
         self.country = country
         self.producer = producer
         self.cast = cast

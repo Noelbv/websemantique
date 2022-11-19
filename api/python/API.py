@@ -98,25 +98,25 @@ class SPARQLCall:
 
     def get_Film_Series(self, id):
         query = """
-        select ?instancelabel ?titre ?countrylabel ?producerlabel  where
+        select ?instance ?label ?countrylabel  where
         {
         %()s wdt:P31 ?instance;
-                     wdt:P1705 ?titre;
-                     wdt:P495 ?country;
-                     wdt:P162 ?producer.
-          ?country rdfs:label ?countrylabel.
-          ?instance rdfs:label ?instancelabel.
-          ?producer rdfs:label ?producerlabel.
+                     rdfs:label  ?label.
+          OPTIONAL{
+             %(1)s wdt:P495 ?country.
+             ?country rdfs:label ?countrylabel.
+            FILTER (lang(?countrylabel)="en")
+           }
           VALUES ?instance {wd:Q24856}  
-          FILTER ((lang(?countrylabel)="en")  && (lang(?producerlabel)="en") && (lang(?instancelabel)="en"))
-        }
-        """.replace("%()s", id)
+          FILTER ( (lang(?label)="en") )
+        }limit 1
+        """.replace("%()s", id).replace("%(1)s", id)
 
         # Genres
         query_genres = """
         select  ?genrelabel where
         {
-        %()s wdt:P31 ?instance;
+        %()s  wdt:P31 ?instance;
                      wdt:P136 ?genre.
           ?genre rdfs:label ?genrelabel.
           VALUES ?instance {wd:Q24856}
@@ -148,6 +148,13 @@ class SPARQLCall:
         } LIMIT 10
         """.replace("%()s", id)
 
+        query_movies = """
+        select distinct ?f ?flabel where
+        {
+        ?f wdt:P179 %()s;
+           rdfs:label ?flabel.
+          FILTER (lang(?flabel) = "en")
+        }""".replace("%()s", id)
         try:
             self.sparql.setQuery(query)
             ret = self.sparql.queryAndConvert()
@@ -157,25 +164,27 @@ class SPARQLCall:
             ret_cast = self.sparql.queryAndConvert()
             self.sparql.setQuery(query_producers)
             ret_producer = self.sparql.queryAndConvert()
-            return Utils.construct_film_series(ret, id, ret_genres, ret_cast, ret_producer)
+            self.sparql.setQuery(query_movies)
+            ret_movies = self.sparql.queryAndConvert()
+            return Utils.construct_film_series(ret, id, ret_genres, ret_cast, ret_producer, ret_movies)
         except Exception as e:
             print(e)
 
     def get_Film(self, id):
         query = """
-               select distinct ?instance ?titre ?partoflabel ?director ?directorlabel ?countrylabel where
-                {
-                %()s wdt:P31 ?instance;
-                             wdt:P1476 ?titre;
-                             wdt:P495 ?country;
-                             wdt:P57 ?director.
-                  ?director rdfs:label ?directorlabel.
-                  ?country rdfs:label ?countrylabel.  
-                  OPTIONAL {%(1)s wdt:P179 ?partof.
-                            ?partof rdfs:label ?partoflabel.
-                            FILTER (lang(?partoflabel)="en")}
-                  FILTER ((lang(?countrylabel)="en")  && (lang(?directorlabel)="en") )
-                }limit 1
+            select distinct ?instance ?titre ?partof ?partoflabel ?director ?directorlabel ?countrylabel where
+            {
+            %()s wdt:P31 ?instance;
+                         wdt:P1476 ?titre;
+                         wdt:P495 ?country;
+                         wdt:P57 ?director.
+              ?director rdfs:label ?directorlabel.
+              ?country rdfs:label ?countrylabel.  
+              OPTIONAL {%(1)s wdt:P179 ?partof.
+                        ?partof rdfs:label ?partoflabel.
+                        FILTER (lang(?partoflabel)="en")}
+              FILTER ((lang(?countrylabel)="en")  && (lang(?directorlabel)="en") )
+            }limit 1
                         """.replace("%()s", id).replace("%(1)s", id)
 
         # Genres

@@ -152,12 +152,18 @@ def construct_human(ret, id, ret_country, ret_metier, ret_prenoms, ret_movies):
     return json.dumps(h, cls=HumanEncoder)
 
 
-
-def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers):
+def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers, ret_movies):
     r = ret["results"]["bindings"][0]
-    titre = r['titre']['value']
-    country = r['countrylabel']['value']
-    director = r['producerlabel']['value']
+    titre = ''
+    country = ''
+    if 'label' in r:
+        titre = r['label']['value']
+    if 'title' in r:
+        titre = r['title']['value']
+    if 'nativelabel' in r:
+        titre = r['nativelabel']['value']
+    if 'countrylabel' in r:
+        country = r['countrylabel']['value']
 
     genre = []
     for re in ret_genre["results"]["bindings"]:
@@ -170,6 +176,10 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers):
     producers = []
     for re in ret_producers["results"]["bindings"]:
         producers.append(re['objectlabel']['value'])
+
+    movies = []
+    for re in ret_movies["results"]["bindings"]:
+        movies.append([re['flabel']['value'], re['f']['value'].split("/")[-1]])
 
     query = """
                 SELECT ?pageid WHERE {
@@ -190,30 +200,34 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers):
     )
     sparql.setReturnFormat(JSON)
     sparql.setQuery(query)
+    url = None
     try:
-        url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
+        if sparql.queryAndConvert()['results']['bindings']:
+            url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
     except Exception as e:
         print(e)
 
-    get_url = requests.get(url)
-    get_text = get_url.text
-    soup = BeautifulSoup(get_text, "html.parser")
-    title = soup.find_all(["h1"])[0].get_text()
-
-    p = wikipedia.page(title, auto_suggest=False)
-    resume = p.summary
-
-    imgs = p.images
     img = ""
-    for i in imgs:
-        if "poster" in i or "logo" in i or "wordmark" in i or title in i:
-            img = i
-            break
-    else:
-        img = imgs[0]
+    resume = ""
+    if url:
+        get_url = requests.get(url)
+        get_text = get_url.text
+        soup = BeautifulSoup(get_text, "html.parser")
+        title = soup.find_all(["h1"])[0].get_text()
+
+        p = wikipedia.page(title, auto_suggest=False)
+        resume = p.summary
+
+        imgs = p.images
+        for i in imgs:
+            if "poster" in i or "logo" in i or "wordmark" in i or title in i:
+                img = i
+                break
+        else:
+            img = imgs[0]
 
     # franchise ou logo ou le titre ou wordmark
-    f = FilmSeries(titre, genre, director, country, producers, casting, resume, img)
+    f = FilmSeries(titre, genre, country, producers, casting, resume, img, movies)
     return json.dumps(f, cls=FilmSeriesEncoder)
 
 
@@ -225,7 +239,7 @@ def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_c
 
     part_of_serie = ""
     if 'partoflabel' in r:
-        part_of_serie = r['partoflabel']['value']
+        part_of_serie = [r['partoflabel']['value'], r['partof']['value'].split("/")[-1]]
 
     pub_date = ret_dur_review["results"]["bindings"][0]['datenode']['value']
     duration = ""
