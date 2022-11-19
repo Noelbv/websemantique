@@ -12,8 +12,8 @@ const NavBar = (props) => {
     }
 
     return (
-        <div onClick={handleClick} className="pl-12 pr-12 bg-blacked fixed flex h-24 flex-row items-center justify-between w-full z-40 ">
-            <button className="text-3xl text-gray-200 font-bold mr-16 font-poppins flex-row flex">
+        <div className="pl-12 pr-12 bg-blacked fixed flex h-24 flex-row items-center justify-between w-full z-40 ">
+            <button onClick={handleClick} className="text-3xl text-gray-200 font-bold mr-16 font-poppins flex-row flex">
                 Netfl'<p className='text-rose-900'>IF</p>
             </button>
             <div className='flex flex-row w-1/2'>
