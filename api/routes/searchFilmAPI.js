@@ -2,24 +2,23 @@ var express = require('express');
 var router = express.Router();
 //Import PythonShell module.
 const {PythonShell} =require('python-shell');
-
+const {exec, spawn} = require('child_process');
+//const tools = require('./Utils/tools')
 //Router to handle the incoming request.
 router.get('*', function(req, res, next) {
-	let options = {
-		mode: 'text',
-		pythonOptions: ['-u'], // get print results in real-time
-		scriptPath: './python', //If you are having python_test.py script in same folder, then it's optional.
-		args: ["0", req.query.input] //An argument which can be accessed in the script using sys.argv[1]
-	};
+	var capitalizedFirstInput = req.query.input.charAt(0).toUpperCase() + req.query.input.slice(1);
 
-	PythonShell.run('main.py', options, function (err, result){
-		console.log("exec python en cours...");
-		if (err) throw err;
-		// result is an array consisting of messages collected
-		//during execution of script.
-		//console.log('result: ', JSON.parse(result));
-		res.send(JSON.parse(result))
+	var process = spawn('python3',["./python/main.py", "0", capitalizedFirstInput]);
+
+	process.stdout.on('data', (data) => {
+		console.log('Child Process STDOUT');
+		res.send(JSON.parse(data));
 	});
+	process.stderr.on('data', (error) => {
+		res.send(JSON.parse(error));
+	});
+
+
 });
 
 module.exports = router;
