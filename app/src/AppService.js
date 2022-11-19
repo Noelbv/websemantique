@@ -1,28 +1,24 @@
-//fichier utilitaire pour les services
-// création des requests options
-// fonctions get/save/create/delete
-
-// EXEMPLE OPTIONS REQUETE API (headers)
-// const getRequestOptionsGoogleAPI = (method = "GET") => ({
-//   method,
-//   headers: {
-//     "Content-Type": "application/json",
-//     "X-Requested-With": "fetch",
-//   },
-// });
-
-
-
 class ApiService {
 
   static getMovie = async (idMovie) => {
     const response = await fetch(
-        `/getmovie?id=${idMovie}`
+        `/movie?id=${idMovie}`
         );
     return response.json();
-    // .then(res => res.text())
-    // .then(res => setResponse({ apiResponse: res }));
+  }
 
+  static getSerie = async (idSerie) => {
+    const response = await fetch(
+        `/serie?id=${idSerie}`
+        );
+    return response.json();
+  }
+
+  static getActor = async (idActor) => {
+    const response = await fetch(
+        `/actor?id=${idActor}`
+        );
+    return response.json();
   }
 
   static getSearchFilm = async (stringSearch) => {
@@ -30,9 +26,6 @@ class ApiService {
         `/search?input=${stringSearch}`
         );
     return response.json();
-    // .then(res => res.text())
-    // .then(res => setResponse({ apiResponse: res }));
-
   }
 };
 
