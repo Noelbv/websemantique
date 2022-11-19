@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "pip install --upgrade pip && pip3 install SPARQLWrapper && pip3 install wikipedia && pip3 install bs4 && pip3 install requests && node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
