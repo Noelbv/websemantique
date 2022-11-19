@@ -11,7 +11,7 @@ const FilmBox = (props) => {
   }
   
   return (
-    <div onClick={handleClick}  className="inline-block px-3">
+    <button onClick={handleClick}  className="inline-block px-3">
       <div className="group/edit relative w-64 h-64 max-w-xs overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out">
       <img
         src={HarryPotterImage}
@@ -28,7 +28,7 @@ const FilmBox = (props) => {
         </p>
       </div>
     </div>
-    </div>
+    </button>
   );
 };
 
