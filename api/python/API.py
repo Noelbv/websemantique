@@ -287,53 +287,22 @@ class SPARQLCall:
             print(e)
 
     def get_result_search(self, enter, limit):
-        query_human = """
-        select distinct ?object ?objectlabel ?objectinstance where
-        {
-        ?object wdt:P31 wd:Q5.
-        ?object wdt:P106 ?occupation.
-        VALUES ?occupation { wd:Q10800557 wd:Q3282637 wd:Q10798782 wd:Q28389 wd:Q33999}
-        ?object rdfs:label ?objectlabel.
-        ?object wdt:P31 ?objectinstance.
-        VALUES ?objectinstance { wd:Q5 wd:Q24856 wd:Q11424 }
-        FILTER ((lang(?objectlabel)="en") && regex(?objectlabel, "%()s"))
-        }
-        LIMIT 5
-        """.replace("%()s", enter)
-
         query_movie = """
-        select distinct ?object ?objectlabel ?objectinstance where
+        select distinct ?objectinstance ?objectlabel ?duration  where
         {
         ?object wdt:P31 wd:Q11424.
         ?object rdfs:label ?objectlabel.
         ?object wdt:P31 ?objectinstance.
-        VALUES ?objectinstance { wd:Q5 wd:Q24856 wd:Q11424 }
+        OPTIONAL{?object wdt:P2047 ?duration}
+        VALUES ?objectinstance {wd:Q11424}
         FILTER ((lang(?objectlabel)="en") && regex(?objectlabel, "%()s"))
         }
-        LIMIT 5
+        LIMIT 15
         """.replace("%()s", enter)
-
-        query_serie = """
-        select distinct ?object ?objectlabel ?objectinstance where
-        {
-        ?object wdt:P31 wd:Q24856.
-        ?object rdfs:label ?objectlabel.
-        ?object wdt:P31 ?objectinstance.
-        VALUES ?objectinstance { wd:Q5 wd:Q24856 wd:Q11424 }
-        FILTER ((lang(?objectlabel)="en") && regex(?objectlabel, "%()s"))
-        }
-        LIMIT 5
-        """.replace("%()s", enter)
-
         try:
-
-            self.sparql.setQuery(query_human)
-            ret = self.sparql.queryAndConvert()
-            self.sparql.setQuery(query_serie)
-            ret_serie = self.sparql.queryAndConvert()
             self.sparql.setQuery(query_movie)
             ret_movie = self.sparql.queryAndConvert()
-            return Utils.construct_separated_list_of_result(ret, ret_movie, ret_serie)
+            return Utils.construct_separated_list_of_result(ret_movie)
         except Exception as e:
             print(e)
 
@@ -398,7 +367,7 @@ class SPARQLCall:
           }
         }
         ORDER BY desc(?date)
-        LIMIT 3
+        LIMIT 5
         """
 
         rets = []

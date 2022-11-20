@@ -40,44 +40,34 @@ def get_image_from_wikipedia(id, words):
         get_text = get_url.text
         soup = BeautifulSoup(get_text, "html.parser")
         title = soup.find_all(["h1"])[0].get_text()
-
         p = wikipedia.page(title, auto_suggest=False)
 
-        imgs = p.images
+        if p.images:
+            imgs = p.images
 
-        for i in imgs:
-            if any(ext in i for ext in words):
-                img = i
-                break
+            for i in imgs:
+                if any(ext in i for ext in words):
+                    img = i
+                    break
+            else:
+                img = imgs[0]
+            return img
         else:
-            img = imgs[0]
-        return img
+            return ""
     else:
         return ""
 
 
-def construct_separated_list_of_result(ret, ret_movie, ret_serie):
-    persons = []
+def construct_separated_list_of_result(ret_movie):
     films = []
-    films_series = []
-    for r in ret["results"]["bindings"]:
-        id = "wd:" + r['object']["value"].split("/")[-1]
-        res = {"id": id, "name": r['objectlabel']["value"],
-               "image": get_image_from_wikipedia(id, r['objectlabel']["value"].split(" "))}
-        persons.append(res)
-
     for r in ret_movie["results"]["bindings"]:
-        id = "wd:" + r['object']["value"].split("/")[-1]
+        id = r['objectinstance']["value"].split("/")[-1]
         res = {"id": id, "name": r['objectlabel']["value"],
-               "image": get_image_from_wikipedia(id, ["poster"] + r['objectlabel']["value"].split(" "))}
+               "image": get_image_from_wikipedia("wd:" + id, ["poster"])}
+
         films.append(res)
 
-    for r in ret_serie["results"]["bindings"]:
-        id = "wd:" + r['object']["value"].split("/")[-1]
-        res = {"id": id, "name": r['objectlabel']["value"]}
-        films_series.append(res)
-
-    result = {"personnes": persons, "films": films, "film_series": films_series}
+    result = {"films": films}
     return json.dumps(result)
 
 
@@ -321,6 +311,7 @@ def construct_list_genres(ret, genres):
         ri = ru['results']['bindings']
         for r in ri:
             id = r['f']['value'].split("/")[-1]
+
             query = """
                         SELECT ?pageid WHERE {
                         VALUES (?item) {(%()s)} 
@@ -352,17 +343,21 @@ def construct_list_genres(ret, genres):
             title = soup.find_all(["h1"])[0].get_text()
 
             p = wikipedia.page(title, auto_suggest=False)
-            plot = p.content.split("== Plot ==")[1].split("==")[0]
+            print(p)
+            print(url)
+            try:
+                imgs = p.images
+                for i in imgs:
+                    if "poster" in i:
+                        img = i
+                        break
+                else:
+                    img = imgs[0]
+            except Exception as e:
+                print(e)
+                img = ""
 
-            imgs = p.images
-            img = ""
-            for i in imgs:
-                if "poster" in i:
-                    img = i
-                    break
-            else:
-                img = imgs[0]
-            list_of[i].append([r['flabel']['value'], id, img])
+            list_of[i].append([title, id, img])
         i += 1
     result = dict(zip(genres, list_of))
     print(result)
