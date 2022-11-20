@@ -13,11 +13,17 @@ router.get('*', function(req, res, next) {
 	};
 	console.log('request: ', req.query.id);
 	PythonShell.run('main.py', options, function (err, result){
-		if (err) throw err;
+		try  {
+			res.send(JSON.parse(result))
+			console.log("JSON PARSED");
+			
+		} catch(error) {
+			res.send(error);
+		}
 		// result is an array consisting of messages collected
 		//during execution of script.
-		console.log('result: ', JSON.parse(result));
-		res.send(JSON.parse(result))
+		console.log('result:',result);
+
 	});
 });
 

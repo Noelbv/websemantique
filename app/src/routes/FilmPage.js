@@ -60,19 +60,19 @@ const FilmPage = () => {
                 <div className="flex flex-col w-1/3 order-3">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
                   <ul className="text-sm">
-                    {screenwriter.map(s => (<li><Link to={`/person/wd:${s[1]}`}>{s[0]}</Link></li>))}
+                    {screenwriter.map((name,index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
                   </ul>
                 </div>
                 <div className="flex flex-col w-1/3 order-1">
                   <h3 className="font-semibold text-xl mt-4 mb-2 ">Cast members</h3>
                   <ul className="text-sm">
-                    {casting.map(s => (<li><Link to={`/person/wd:${s[1]}`}>{s[0]}</Link></li>))}
+                    {casting.map((name,index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
                   </ul>
                 </div>
               </div>
               <div className="font-semibold text-xl mt-4 mb-2">Avis</div>
               <div className="pt-2 pl-2 pb-1 bg-white rounded">
-                <Rating name="read-only" value={responseFilm.review.substring(0, 3)} precision={0.25} max={10} readOnly />
+                <Rating name="read-only" value={parseInt(responseFilm.review.substring(0, 3), 10)} precision={0.25} max={10} readOnly />
               </div>
             </div>
           </>
