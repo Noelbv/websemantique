@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import ApiService from "../AppService";
 import { useParams, Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import ButtonReturn from "../components/ButtonReturn";
+
 // page qui donne les infos d'un film
 const SeriesPage = () => {
 
   const [responseSeries, setResponseSeries] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const [seriesExist, setSeriesExist] = useState(true);
   const { idSeries } = useParams();
 
   useEffect(() => {
@@ -17,6 +20,14 @@ const SeriesPage = () => {
         if(!isDataFetched) {
           setIsDataFetched(true);
         }
+        if (!seriesExist) {
+          setSeriesExist(true);
+        }
+      })
+      .catch((error) => {
+        setIsDataFetched(true);
+        setSeriesExist(false);
+        console.log("ERRORRRRRRRR");
       });
   }, []);
 
@@ -30,7 +41,7 @@ const SeriesPage = () => {
     <div className="bg-blacked font-poppins flex-col items-stretch h-screen text-gray-200  overflow-y-auto hide-scroll-bar">
       <NavBar />
       <div className="pt-24">
-      {isDataFetched ? (
+      {isDataFetched && seriesExist && (
       <>
         <div
           id="header"
@@ -70,13 +81,22 @@ const SeriesPage = () => {
           </div>
         </div>
       </>
-      ) : (
+      )}
+      {!isDataFetched && seriesExist && (
         <>
             <div className="font-poppins text-white font-medium text-xl">
               Data Processing
             </div>
           </>
       )}
+      {isDataFetched && !seriesExist && (
+          <div className="flex flex-col mt-24 items-center justify-center">
+            <div className="font-poppins text-center text-2xl mb-8 text-white font-medium">
+              This Series doesn't have an English Wiki Page
+            </div>
+            <ButtonReturn />
+          </div>
+        )}
       </div>
     </div>
   );

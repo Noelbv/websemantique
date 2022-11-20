@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Rating from "@mui/material/Rating";
 import ApiService from "../AppService";
 import { Link } from "react-router-dom";
-
+import ButtonReturn from "../components/ButtonReturn";
 import { useParams } from "react-router-dom";
 
 import NavBar from "../components/NavBar";
@@ -13,6 +13,7 @@ const FilmPage = () => {
 
   const [responseFilm, setResponseFilm] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const [filmExist, setFilmExist] = useState(true);
   const { idFilm } = useParams();
 
   useEffect(() => {
@@ -23,6 +24,14 @@ const FilmPage = () => {
         if (!isDataFetched) {
           setIsDataFetched(true);
         }
+        if (!filmExist) {
+          setFilmExist(true);
+        }
+      })
+      .catch((error) => {
+        setIsDataFetched(true);
+        setFilmExist(false);
+        console.log("ERRORRRRRRRR");
       });
   }, []);
 
@@ -36,7 +45,7 @@ const FilmPage = () => {
     <div className="bg-blacked font-poppins flex-col items-stretch h-screen text-gray-200  overflow-y-auto hide-scroll-bar">
       <NavBar />
       <div className="pt-24">
-        {isDataFetched ? (
+      {isDataFetched && filmExist && (
           <>
             <div
               id="header"
@@ -86,13 +95,22 @@ const FilmPage = () => {
               </div>
             </div>
           </>
-        ) : (
+          ) }
+          {!isDataFetched && filmExist && (
           <div className="flex flex-col pt-48 items-center">
             <img
               src={loadingGIF}
               alt="chargement"
               className="w-1/6"
             />
+          </div>
+        )}
+        {isDataFetched && !filmExist && (
+          <div className="flex flex-col mt-24 items-center justify-center">
+            <div className="font-poppins text-center text-2xl mb-8 text-white font-medium">
+              This Film doesn't have an English Wiki Page
+            </div>
+            <ButtonReturn />
           </div>
         )}
       </div>
