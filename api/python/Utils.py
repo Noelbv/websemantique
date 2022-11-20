@@ -115,7 +115,7 @@ def construct_separated_list_of_result(ret_movie):
         else:
             duration = r['duration']["value"] + " min"
 
-        res = {"id": id, "name": r['objectlabel']["value"], "image": img, "duration": duration}
+        res = {"id": "wd:" + id, "name": r['objectlabel']["value"], "image": img, "duration": duration}
 
         films.append(res)
 
@@ -358,7 +358,7 @@ def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_c
 
 def construct_list_genres(ret, genres):
     list_of = [[], [], [], []]
-    i = 0
+    ini = 0
     for ru in ret:
         ri = ru['results']['bindings']
         for r in ri:
@@ -395,21 +395,21 @@ def construct_list_genres(ret, genres):
             title = soup.find_all(["h1"])[0].get_text()
 
             p = wikipedia.page(title, auto_suggest=False)
-            print(p)
-            print(url)
             try:
                 imgs = p.images
-                for i in imgs:
-                    if "poster" in i:
-                        img = i
-                        break
+                if imgs:
+                    for i in imgs:
+                        if "poster" in i or any(ext in i for ext in title.split(" ")):
+                            img = i
+                            break
+                    else:
+                        img = imgs[0]
                 else:
-                    img = imgs[0]
+                    img = ""
             except Exception as e:
-                print(e)
                 img = ""
 
-            list_of[i].append([title, id, img])
-        i += 1
+            list_of[ini].append([title, "wd:" + id, img])
+        ini += 1
     result = dict(zip(genres, list_of))
-    print(result)
+    return result
