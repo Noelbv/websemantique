@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "python-setup": "pip install --upgrade pip && pip3 install SPARQLWrapper && pip3 install wikipedia && pip3 install bs4 && pip3 install requests",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -14,5 +15,7 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
     "python-shell": "^3.0.1"
-  }
+  },
+  "main": "index.js",
+  "license": "MIT"
 }

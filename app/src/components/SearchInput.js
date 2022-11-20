@@ -11,7 +11,7 @@ const SearchInput = (props) => {
                 onChange={(e) => {context.setRecherche(e.target.value)}} 
                 type="text" 
                 placeholder={props.inputSearch ? props.inputSearch : "Chercher un film" }
-                className="h-12 rounded-tl-lg rounded-bl-lg font-poppins pl-4"
+                className="h-12 rounded-tl-lg rounded-bl-lg font-poppins pl-4 w-full"
             /> 
         </>
     );
