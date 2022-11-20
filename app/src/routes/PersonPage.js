@@ -3,6 +3,8 @@ import Rating from "@mui/material/Rating";
 import ApiService from "../AppService";
 import { Link } from "react-router-dom";
 
+import { useParams } from "react-router-dom";
+
 import HarryPotterImage from "../misc/images/HP5.jpg";
 
 import NavBar from "../components/NavBar";
@@ -11,9 +13,10 @@ const FilmPage = () => {
 
   const [responsePerson, setResponsePerson] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const { idPerson } = useParams();
 
   useEffect(() => {
-    ApiService.getPerson("wd:Q484779")
+    ApiService.getPerson(idPerson)
       .then((res) => {
         console.log(res);
         setResponsePerson(res);
