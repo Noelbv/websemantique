@@ -116,8 +116,8 @@ def construct_separated_list_of_result(ret_movie):
             duration = r['duration']["value"] + " min"
 
         res = {"id": "wd:" + id, "name": r['objectlabel']["value"], "image": img, "duration": duration}
-
-        films.append(res)
+        if img != "":
+            films.append(res)
 
     result = {"films": films}
     return json.dumps(result)

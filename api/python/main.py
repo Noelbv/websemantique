@@ -1,6 +1,5 @@
 import API
 import sys
-import json
 
 
 def main():
@@ -30,8 +29,7 @@ def main():
         print(a.get_Human(sys.argv[2]))
     elif fct == "6":
         # Récupérer les films par genre
-        parsed = json.loads(a.get_top_films_by_genre())
-        print(json.dumps(parsed, indent=4))
+        print(a.get_top_films_by_genre())
 
 
 main()

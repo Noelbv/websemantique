@@ -297,7 +297,7 @@ class SPARQLCall:
         VALUES ?objectinstance {wd:Q11424}
         FILTER ((lang(?objectlabel)="en") && regex(?objectlabel, "%()s"))
         }
-        LIMIT 15
+        LIMIT 7
         """.replace("%()s", enter)
         try:
             self.sparql.setQuery(query_movie)
