@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import NavBar from "../components/NavBar";
 import { useParams } from "react-router-dom";
 import PreviewFilm from "../components/PreviewFilm";
 import HarryPotterImage1 from "../misc/images/HP1.jpg";
 import HarryPotterImage5 from "../misc/images/HP5.jpg";
 import ApiService from "../AppService";
+import AppContext from "../context";
 // page qui présente les résultats d'une recherche
 const SearchPage = () => {
   const [responseSearch, setResponseSearch] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
   const { input } = useParams();
+  const context = useContext(AppContext);
 
   useEffect(() => {
+    context.setRecherche(""); // vider le cache de l'input search
     ApiService.getSearchFilm(input)
     .then((res) => {
       console.log(res);
