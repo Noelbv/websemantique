@@ -7,9 +7,9 @@ class ApiService {
     return response.json();
   }
 
-  static getSerie = async (idSerie) => {
+  static getSeries = async (idSeries) => {
     const response = await fetch(
-        `/serie?id=${idSerie}`
+        `/series?id=${idSeries}`
         );
     return response.json();
   }

@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from "react";
-import Rating from "@mui/material/Rating";
 import ApiService from "../AppService";
-
-import HarryPotterImage from "../misc/images/HP5.jpg";
 
 import NavBar from "../components/NavBar";
 // page qui donne les infos d'un film
 const SeriesPage = () => {
 
-  const [responseFilm, setResponseFilm] = useState("");
+  const [responseSeries, setResponseSeries] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
-    ApiService.getMovie("wd:Q24871")
+    ApiService.getSeries("wd:Q216930")
       .then((res) => {
         console.log(res);
-        setResponseFilm(res);
+        setResponseSeries(res);
         if(!isDataFetched) {
           setIsDataFetched(true);
         }
       });
   }, []);
 
-  const casting = responseFilm.cast_member;
-  //const director = responseFilm.director;
-  const screenwriter = responseFilm.screenwriter;
+  const casting = responseSeries.cast;
+  const producers = responseSeries.producer;
 
   // const [linkImage, setLinkImage] = useState("");
   // setLinkImage("https://static01.nyt.com/images/2013/12/27/multimedia/movies-wolf-12272013/movies-wolf-12272013-superJumbo.jpg")
@@ -37,10 +33,10 @@ const SeriesPage = () => {
         <div
           id="header"
           className="flex flex-row items-center justify-center bg-cover bg-center relative w-100 h-72 bg-white overflow-hidden"
-          style={{ backgroundImage: `url(${responseFilm.photo})` }}
+          style={{ backgroundImage: `url(${responseSeries.img})` }}
         >
           <h1 className="relative z-10 font-bold font-poppins text-6xl">
-            {responseFilm.title}
+            {responseSeries.title}
           </h1>
           <div className="absolute bg-black opacity-50 w-full h-full">
           </div>
@@ -48,28 +44,22 @@ const SeriesPage = () => {
         <div id="contenu" className="pt-12 pl-24 pr-24 pb-24">
           <div className="font-semibold text-xl mt-4 mb-2">Synopsis</div>
           <div className="text-sm max-h-24 overflow-hidden">
-            {responseFilm.resume}
+            {responseSeries.resume}
           </div>
           <div className="flex flex-row">
-            <div className="flex flex-col w-1/3 order-2">
-              <h3 className="font-semibold text-xl mt-4 mb-2">Director</h3>
-              <h4 className="text-sm">{responseFilm.director[0]}</h4>
-            </div>
             <div className="flex flex-col w-1/3 order-3">
-              <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
+              <h3 className="font-semibold text-xl mt-4 mb-2">Producers</h3>
               <ul className="text-sm">
-                {screenwriter.map((name,index) => (<li key={index}>{name[0]}</li>))}
+                {producers.map((name,index) => (<li key={index}>{name}</li>))}
               </ul>
             </div>
             <div className="flex flex-col w-1/3 order-1">
               <h3 className="font-semibold text-xl mt-4 mb-2 ">Cast members</h3>
               <ul className="text-sm">
-                {casting.map((name,index) => (<li key={index}>{name[0]}</li>))}
+                {casting.map((name,index) => (<li key={index}>{name}</li>))}
               </ul>
             </div>
           </div>
-          <div className="font-semibold text-xl mt-4 mb-2">Avis</div>
-          <Rating name="read-only" value={4.4} precision={0.25} readOnly />
         </div>
       </>
       ) : (
