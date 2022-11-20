@@ -10,6 +10,45 @@ from FilmSeries import FilmSeries
 from Human import Human, HumanEncoder
 
 
+def get_image_w(id):
+    query = """
+                        SELECT ?pageid WHERE {
+                        VALUES (?item) {(%()s)} 
+                        [ schema:about ?item ; schema:name ?name ;
+                          schema:isPartOf <https://en.wikipedia.org/> ]
+                         SERVICE wikibase:mwapi {
+                             bd:serviceParam wikibase:endpoint "en.wikipedia.org" .
+                             bd:serviceParam wikibase:api "Generator" .
+                             bd:serviceParam mwapi:generator "allpages" .
+                             bd:serviceParam mwapi:gapfrom ?name .
+                             bd:serviceParam mwapi:gapto ?name .
+                             ?pageid wikibase:apiOutput "@pageid" .
+                        }
+                    }""".replace("%()s", id)
+    sparql = SPARQLWrapper(
+        "https://query.wikidata.org/sparql"
+    )
+    sparql.setReturnFormat(JSON)
+    sparql.setQuery(query)
+    try:
+        url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
+    except Exception as e:
+        url = None
+        print(e)
+    if url:
+        get_url = requests.get(url)
+        get_text = get_url.text
+        soup = BeautifulSoup(get_text, "html.parser")
+
+        tables = soup.find_all('td', class_="infobox-image")
+        if tables:
+            img = tables[0].find("img").get("src")
+            return img
+
+        return ""
+    else:
+        return ""
+
 def get_image_from_wikipedia(id, words):
     query = """
                     SELECT ?pageid WHERE {
@@ -94,26 +133,13 @@ def construct_separated_list_of_result(ret_movie):
             title = soup.find_all(["h1"])[0].get_text()
 
             p = wikipedia.page(title, auto_suggest=False)
-            try:
-                imgs = p.images
-                if imgs:
-                    for i in imgs:
-                        if "poster" in i or any(ext in i for ext in title.split(" ")):
-                            img = i
-                            break
-                    else:
-                        img = imgs[0]
-                else:
-                    img = ""
-            except Exception as e:
-                img = ""
-        else:
-            img = ""
 
         if "duration" not in r:
             duration = ""
         else:
             duration = r['duration']["value"] + " min"
+
+        img = get_image_w("wd:" + id)
 
         res = {"id": "wd:" + id, "name": r['objectlabel']["value"], "image": img, "duration": duration}
         if img != "":
@@ -151,46 +177,7 @@ def construct_human(ret, id, ret_country, ret_metier, ret_prenoms, ret_movies):
     metiers = []
     for r_i in r_m:
         metiers.append(r_i['label']['value'])
-    query = """
-                    SELECT ?pageid WHERE {
-                    VALUES (?item) {(%()s)} 
-                    [ schema:about ?item ; schema:name ?name ;
-                      schema:isPartOf <https://en.wikipedia.org/> ]
-                     SERVICE wikibase:mwapi {
-                         bd:serviceParam wikibase:endpoint "en.wikipedia.org" .
-                         bd:serviceParam wikibase:api "Generator" .
-                         bd:serviceParam mwapi:generator "allpages" .
-                         bd:serviceParam mwapi:gapfrom ?name .
-                         bd:serviceParam mwapi:gapto ?name .
-                         ?pageid wikibase:apiOutput "@pageid" .
-                    }
-                }""".replace("%()s", id)
-    sparql = SPARQLWrapper(
-        "https://query.wikidata.org/sparql"
-    )
-    sparql.setReturnFormat(JSON)
-    sparql.setQuery(query)
-    try:
-        url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
-    except Exception as e:
-        print(e)
-
-    get_url = requests.get(url)
-    get_text = get_url.text
-    soup = BeautifulSoup(get_text, "html.parser")
-    title = soup.find_all(["h1"])[0].get_text()
-
-    p = wikipedia.page(title, auto_suggest=False)
-
-    imgs = p.images
-    img = ""
-    elements = name.split(" ")
-    for i in imgs:
-        if any(ext in i for ext in elements):
-            img = i
-            break
-    else:
-        img = imgs[0]
+    img = get_image_w(id)
 
     h = Human(name, sexe, img, country, birth, metiers, prenoms, movies)
     return json.dumps(h, cls=HumanEncoder)
@@ -272,6 +259,7 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers, ret_movie
         else:
             img = imgs[0]
 
+    img = get_image_w(id)
     # franchise ou logo ou le titre ou wordmark
     f = FilmSeries(titre, genre, country, producers, casting, resume, img, movies)
     return json.dumps(f, cls=FilmSeriesEncoder)
