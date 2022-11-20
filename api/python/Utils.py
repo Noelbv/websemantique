@@ -139,7 +139,7 @@ def construct_separated_list_of_result(ret_movie):
         else:
             duration = r['duration']["value"] + " min"
 
-        img = get_image_w(id)
+        img = get_image_w("wd:" + id)
 
         res = {"id": "wd:" + id, "name": r['objectlabel']["value"], "image": img, "duration": duration}
         if img != "":
