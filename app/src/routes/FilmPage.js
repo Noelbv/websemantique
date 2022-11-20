@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import NavBar from "../components/NavBar";
+//import { response } from "../../../api/app";
 // page qui donne les infos d'un film
 const FilmPage = () => {
 
@@ -52,16 +53,24 @@ const FilmPage = () => {
               <div className="text-sm max-h-24 overflow-hidden">
                 {responseFilm.resume}
               </div>
-              <div className="flex flex-row text-sm">
+              <div className="mt-4 flex flex-row text-sm">
                 <div className="flex flex-col w-1/3 order-2">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Director</h3>
                   <Link to={`/person/${responseFilm.director[1]}`}>{responseFilm.director[0]}</Link>
-                </div>
-                <div className="flex flex-col w-1/3 order-3">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
                   <ul className="text-sm">
                     {screenwriter.map((name,index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
                   </ul>
+                </div>
+                <div className="flex flex-col w-1/3 order-3">
+                {(responseFilm.part_of_series==="") ? (
+                  <h3 className="font-semibold text-xl mt-4 mb-2">Ce film ne fait pas partie d'une série</h3>
+                ) : (
+                  <>
+                    <h3 className="font-semibold text-xl mt-4 mb-2">Ce film fait partie d'une série</h3>
+                    <Link className="bg-rose-900 text-center p-2 rounded" to={`/series/wd:${responseFilm.part_of_series[1]}`}>{responseFilm.part_of_series[0]}</Link>
+                  </>
+                )}
                 </div>
                 <div className="flex flex-col w-1/3 order-1">
                   <h3 className="font-semibold text-xl mt-4 mb-2 ">Cast members</h3>
@@ -70,7 +79,7 @@ const FilmPage = () => {
                   </ul>
                 </div>
               </div>
-              <div className="font-semibold text-xl mt-4 mb-2">Avis</div>
+              <div className="font-semibold text-xl mt-8 mb-2">Avis</div>
               <div className="pt-2 pl-2 pb-1 bg-white rounded">
                 <Rating name="read-only" value={parseInt(responseFilm.review.substring(0, 3), 10)} precision={0.25} max={10} readOnly />
               </div>
