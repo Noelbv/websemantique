@@ -11,11 +11,12 @@ router.get('*', function(req, res, next) {
 		scriptPath: './python', //If you are having python_test.py script in same folder, then it's optional.
 		args: ["5", req.query.id] //An argument which can be accessed in the script using sys.argv[1]
 	};
-	console.log('request: ', req.query.id);
+	console.log('request person: ', req.query.id);
 	PythonShell.run('main.py', options, function (err, result){
 		try  {
-			res.send(JSON.parse(result))
 			console.log("JSON PARSED");
+			res.send(JSON.parse(result))
+			
 			
 		} catch(error) {
 			res.send(error);
