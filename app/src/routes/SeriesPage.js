@@ -3,6 +3,7 @@ import ApiService from "../AppService";
 
 import { useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import loadingGIF from "../misc/images/loading.gif";
 // page qui donne les infos d'un film
 const SeriesPage = () => {
 
@@ -65,11 +66,13 @@ const SeriesPage = () => {
         </div>
       </>
       ) : (
-        <>
-            <div className="font-poppins text-white font-medium text-xl">
-              Data Processing
-            </div>
-          </>
+        <div className="flex flex-col pt-32 items-center">
+          <img
+            src={loadingGIF}
+            alt="chargement"
+            className="w-1/6"
+          />
+        </div>
       )}
       </div>
     </div>
