@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context";
 import ApiService from "../AppService";
@@ -7,8 +7,18 @@ const SearchButton = () => {
 
   const context = useContext(AppContext);
   const navigate = useNavigate();
-  
+  const [enableClick, setEnableClick] =useState(false);
   const [response, setResponse] = useState({ apiResponse: "Rechercher" });
+
+  useEffect(() => {
+    console.log(context.recherche);
+    console.log(enableClick);
+    if(context.recherche === "") {
+      setEnableClick(false);
+    } else {
+      setEnableClick(true);
+    }
+  }, [context.recherche]);
 
   const handleClick = () => {
     console.log(ApiService.getSearchFilm(context.recherche));
@@ -25,7 +35,8 @@ const SearchButton = () => {
     <button
       type="button"
       onClick={handleClick}
-      className="rounded-tr-lg rounded-br-lg h-12 text-white bg-rose-900 flex place-items-center pl-4 pr-4 font-poppins"
+      className="rounded-tr-lg rounded-br-lg h-12 text-white bg-rose-900 transition duration-300 ease-out disabled:bg-white flex place-items-center pl-4 pr-4 font-poppins"
+      disabled={!enableClick}
     >
       {response.apiResponse}
     </button>
