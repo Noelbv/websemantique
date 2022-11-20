@@ -26,3 +26,5 @@ yarn-debug.log*
 yarn-error.log*
 gotoAPI.bat
 launch_api.bat
+node_modules
+perso
