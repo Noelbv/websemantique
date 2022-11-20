@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import ApiService from "../AppService";
-
+import { useParams, Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
 // page qui donne les infos d'un film
 const SeriesPage = () => {
 
   const [responseSeries, setResponseSeries] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const { idSeries } = useParams();
 
   useEffect(() => {
-    ApiService.getSeries("wd:Q216930")
+    ApiService.getSeries(idSeries)
       .then((res) => {
         console.log(res);
         setResponseSeries(res);
@@ -19,6 +20,7 @@ const SeriesPage = () => {
       });
   }, []);
 
+  const movies = responseSeries.movies;
   const casting = responseSeries.cast;
   const producers = responseSeries.producer;
 
@@ -47,13 +49,19 @@ const SeriesPage = () => {
             {responseSeries.resume}
           </div>
           <div className="flex flex-row">
+          <div className="flex flex-col w-1/3 order-1">
+              <h3 className="font-semibold text-xl mt-4 mb-2">Films</h3>
+              {movies.map((movie,index) => (
+                <Link key={index} to={`/film/wq:${movie[1]}`}>{movie[0]}</Link>
+              ))}
+          </div>
             <div className="flex flex-col w-1/3 order-3">
               <h3 className="font-semibold text-xl mt-4 mb-2">Producers</h3>
               <ul className="text-sm">
                 {producers.map((name,index) => (<li key={index}>{name}</li>))}
               </ul>
             </div>
-            <div className="flex flex-col w-1/3 order-1">
+            <div className="flex flex-col w-1/3 order-2">
               <h3 className="font-semibold text-xl mt-4 mb-2 ">Cast members</h3>
               <ul className="text-sm">
                 {casting.map((name,index) => (<li key={index}>{name}</li>))}
