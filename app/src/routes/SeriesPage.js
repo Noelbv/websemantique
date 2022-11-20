@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import ApiService from "../AppService";
 
+import { useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 // page qui donne les infos d'un film
 const SeriesPage = () => {
 
   const [responseSeries, setResponseSeries] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const { idSeries } = useParams();
 
   useEffect(() => {
-    ApiService.getSeries("wd:Q216930")
+    ApiService.getSeries(idSeries)
       .then((res) => {
         console.log(res);
         setResponseSeries(res);

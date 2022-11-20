@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import NavBar from "../components/NavBar";
+import loadingGIF from "../misc/images/loading.gif"
 //import { response } from "../../../api/app";
 // page qui donne les infos d'un film
 const FilmPage = () => {
@@ -59,23 +60,23 @@ const FilmPage = () => {
                   <Link to={`/person/${responseFilm.director[1]}`}>{responseFilm.director[0]}</Link>
                   <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
                   <ul className="text-sm">
-                    {screenwriter.map((name,index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
+                    {screenwriter.map((name, index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
                   </ul>
                 </div>
                 <div className="flex flex-col w-1/3 order-3">
-                {(responseFilm.part_of_series==="") ? (
-                  <h3 className="font-semibold text-xl mt-4 mb-2">Ce film ne fait pas partie d'une série</h3>
-                ) : (
-                  <>
-                    <h3 className="font-semibold text-xl mt-4 mb-2">Ce film fait partie d'une série</h3>
-                    <Link className="bg-rose-900 text-center p-2 rounded" to={`/series/wd:${responseFilm.part_of_series[1]}`}>{responseFilm.part_of_series[0]}</Link>
-                  </>
-                )}
+                  {(responseFilm.part_of_series === "") ? (
+                    <h3 className="font-semibold text-xl mt-4 mb-2">Ce film ne fait pas partie d'une série</h3>
+                  ) : (
+                    <>
+                      <h3 className="font-semibold text-xl mt-4 mb-2">Ce film fait partie d'une série</h3>
+                      <Link className="bg-rose-900 text-center p-2 rounded" to={`/series/wd:${responseFilm.part_of_series[1]}`}>{responseFilm.part_of_series[0]}</Link>
+                    </>
+                  )}
                 </div>
                 <div className="flex flex-col w-1/3 order-1">
                   <h3 className="font-semibold text-xl mt-4 mb-2 ">Cast members</h3>
                   <ul className="text-sm">
-                    {casting.map((name,index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
+                    {casting.map((name, index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
                   </ul>
                 </div>
               </div>
@@ -86,11 +87,13 @@ const FilmPage = () => {
             </div>
           </>
         ) : (
-          <>
-            <div className="font-poppins text-white font-medium text-xl">
-              Data Processing
-            </div>
-          </>
+          <div className="flex flex-col pt-48 items-center">
+            <img
+              src={loadingGIF}
+              alt="chargement"
+              className="w-1/6"
+            />
+          </div>
         )}
       </div>
     </div>
