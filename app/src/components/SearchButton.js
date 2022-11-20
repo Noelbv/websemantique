@@ -11,8 +11,6 @@ const SearchButton = () => {
   const [response, setResponse] = useState({ apiResponse: "Rechercher" });
 
   useEffect(() => {
-    console.log(context.recherche);
-    console.log(enableClick);
     if(context.recherche === "") {
       setEnableClick(false);
     } else {

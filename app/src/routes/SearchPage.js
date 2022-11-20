@@ -38,14 +38,16 @@ const SearchPage = () => {
               Meilleurs Résultats 
             </div>
             <div className="container flex flex-col gap-5">
-              {films.map((item) => (
+              {films.map((item) => {
+              if(item.image !== "") {
+                return (
                  <PreviewFilm
                  id={item.id}
                  image={item.image}
                  title={item.name}
                  duration="2h30"
                />
-              ))}
+              )}})}
             </div>
           </>
         ) : (
