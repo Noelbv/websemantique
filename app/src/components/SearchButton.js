@@ -8,7 +8,6 @@ const SearchButton = () => {
   const context = useContext(AppContext);
   const navigate = useNavigate();
   const [enableClick, setEnableClick] =useState(false);
-  const [response, setResponse] = useState({ apiResponse: "Rechercher" });
 
   useEffect(() => {
     if(context.recherche === "") {
@@ -19,11 +18,6 @@ const SearchButton = () => {
   }, [context.recherche]);
 
   const handleClick = () => {
-    console.log(ApiService.getSearchFilm(context.recherche));
-    //       .then(res => res.text())
-    //       .then(res => setResponse({ apiResponse: res }));
-
-    // condition à remplir en fonction de la réponse serveur
     if (1) {
       navigate(`/search/${context.recherche}`);
     }
@@ -36,7 +30,7 @@ const SearchButton = () => {
       className="rounded-tr-lg rounded-br-lg h-12 text-white bg-rose-900 transition duration-300 ease-out disabled:bg-white flex place-items-center pl-4 pr-4 font-poppins"
       disabled={!enableClick}
     >
-      {response.apiResponse}
+      Search
     </button>
   );
 };

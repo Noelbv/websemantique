@@ -1,5 +1,6 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import Utils
+import sys
 
 
 class SPARQLCall:
@@ -94,7 +95,7 @@ class SPARQLCall:
             ret_movies = self.sparql.queryAndConvert()
             return Utils.construct_human(ret, id, ret_country, ret_metier, ret_prenoms, ret_movies)
         except Exception as e:
-            print(e)
+          print(e)
 
     def get_Film_Series(self, id):
         query = """

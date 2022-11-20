@@ -42,6 +42,7 @@ const SearchPage = () => {
               if(item.image !== "") {
                 return (
                  <PreviewFilm
+                 key={item.id}
                  id={item.id}
                  image={item.image}
                  title={item.name}
