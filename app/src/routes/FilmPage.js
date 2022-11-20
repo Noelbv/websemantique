@@ -60,7 +60,7 @@ const FilmPage = () => {
                 <div className="flex flex-col w-1/3 order-3">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
                   <ul className="text-sm">
-                    {screenwriter.map(s => (<li><Link to={`/person/${s[1]}`}>{s[0]}</Link></li>))}
+                    {screenwriter.map(s => (<li><Link to={`/person/wd:${s[1]}`}>{s[0]}</Link></li>))}
                   </ul>
                 </div>
                 <div className="flex flex-col w-1/3 order-1">
