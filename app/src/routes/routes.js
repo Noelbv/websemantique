@@ -3,6 +3,7 @@ import FilmPage from './FilmPage';
 import HomePage from './HomePage';
 import SearchPage from './SearchPage';
 import PersonPage from './PersonPage';
+import SeriesPage from './SeriesPage';
 import { RouteKey } from '../misc/constantes';
 import { Route, Routes } from 'react-router-dom';
 const ROUTES = [
@@ -29,6 +30,12 @@ const ROUTES = [
         key: RouteKey.PERSON_PAGE,
         exact: true,
         element: <PersonPage />,
+    },
+    {
+        path: "/series/:idSeries",
+        key: RouteKey.SERIES_PAGE,
+        exact: true,
+        element: <SeriesPage />,
     }
 ];
 

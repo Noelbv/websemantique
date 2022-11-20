@@ -8,4 +8,5 @@ export const RouteKey = {
   SEARCH_PAGE: "SEARCH_PAGE",
   FILM_PAGE: "FILM_PAGE",
   PERSON_PAGE: "PERSON_PAGE",
+  SERIES_PAGE: "SERIES_PAGE",
 };
