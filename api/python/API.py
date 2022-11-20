@@ -288,7 +288,7 @@ class SPARQLCall:
 
     def get_result_search(self, enter, limit):
         query_movie = """
-        select distinct ?objectinstance ?objectlabel ?duration  where
+        select distinct ?object ?objectlabel ?duration  where
         {
         ?object wdt:P31 wd:Q11424.
         ?object rdfs:label ?objectlabel.

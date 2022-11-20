@@ -46,7 +46,7 @@ def get_image_from_wikipedia(id, words):
             imgs = p.images
 
             for i in imgs:
-                if any(ext in i for ext in words):
+                if words in i:
                     img = i
                     break
             else:
@@ -61,9 +61,61 @@ def get_image_from_wikipedia(id, words):
 def construct_separated_list_of_result(ret_movie):
     films = []
     for r in ret_movie["results"]["bindings"]:
-        id = r['objectinstance']["value"].split("/")[-1]
-        res = {"id": id, "name": r['objectlabel']["value"],
-               "image": get_image_from_wikipedia("wd:" + id, ["poster"])}
+        id = r['object']["value"].split("/")[-1]
+        query = """
+                    SELECT ?pageid WHERE {
+                    VALUES (?item) {(%()s)} 
+                    [ schema:about ?item ; schema:name ?name ;
+                      schema:isPartOf <https://en.wikipedia.org/> ]
+                     SERVICE wikibase:mwapi {
+                         bd:serviceParam wikibase:endpoint "en.wikipedia.org" .
+                         bd:serviceParam wikibase:api "Generator" .
+                         bd:serviceParam mwapi:generator "allpages" .
+                         bd:serviceParam mwapi:gapfrom ?name .
+                         bd:serviceParam mwapi:gapto ?name .
+                         ?pageid wikibase:apiOutput "@pageid" .
+                    }
+                }""".replace("%()s", "wd:" + id)
+        sparql = SPARQLWrapper(
+            "https://query.wikidata.org/sparql"
+        )
+        sparql.setReturnFormat(JSON)
+        sparql.setQuery(query)
+        try:
+            url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid'][
+                'value']
+        except Exception as e:
+            url = None
+            print(e)
+        if url:
+            get_url = requests.get(url)
+            get_text = get_url.text
+            soup = BeautifulSoup(get_text, "html.parser")
+            title = soup.find_all(["h1"])[0].get_text()
+
+            p = wikipedia.page(title, auto_suggest=False)
+            try:
+                imgs = p.images
+                if imgs:
+                    for i in imgs:
+                        if "poster" in i or any(ext in i for ext in title.split(" ")):
+                            img = i
+                            break
+                    else:
+                        img = imgs[0]
+                else:
+                    img = ""
+            except Exception as e:
+                img = ""
+        else:
+            img = ""
+
+        if "duration" not in r:
+            duration = ""
+        else:
+            duration = r['duration']["value"] + " min"
+
+        res = {"id": id, "name": r['objectlabel']["value"], "image": img, "duration": duration}
 
         films.append(res)
 
