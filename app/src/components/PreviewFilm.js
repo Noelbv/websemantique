@@ -12,7 +12,7 @@ const PreviewFilm = (props) => {
   return (
     <div className="container flex flex-row gap-5 h-48 font-poppins">
       <button type="button" onClick={handleClick} className="w-3/5">
-        <img src={props.image} alt="film" className="w-full h-full rounded-md hover:brightness-50 hover:ease-out hover:duration-200 hover:-translate-y-1 "/>
+        <img src={props.image} alt="film" className="w-full h-full object-cover rounded-md hover:brightness-50 hover:ease-out hover:duration-200 hover:-translate-y-1 "/>
       </button>
       <div className="flex flex-col">
       <button type="button" onClick={handleClick} className="text-white text-left text-xl hover:text-gray-500 hover:underline font-poppins font-semibold">
