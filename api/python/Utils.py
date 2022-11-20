@@ -239,7 +239,6 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers, ret_movie
     except Exception as e:
         print(e)
 
-    img = ""
     resume = ""
     if url:
         get_url = requests.get(url)
@@ -250,14 +249,6 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers, ret_movie
         p = wikipedia.page(title, auto_suggest=False)
         resume = p.summary
 
-        imgs = p.images
-        for i in imgs:
-            if ("poster" in i or "logo" in i or "wordmark" in i or title.split(" ")[0] in i) and i.split(".")[
-                -1] != "ogg":
-                img = i
-                break
-        else:
-            img = imgs[0]
 
     img = get_image_w(id)
     # franchise ou logo ou le titre ou wordmark
@@ -331,14 +322,7 @@ def construct_film(ret, id, ret_genre, ret_cast, ret_scen, ret_photo, ret_prod_c
     p = wikipedia.page(title, auto_suggest=False)
     plot = p.content.split("== Plot ==")[1].split("==")[0]
 
-    imgs = p.images
-    img = ""
-    for i in imgs:
-        if "poster" in i:
-            img = i
-            break
-    else:
-        img = imgs[0]
+    img = get_image_w(id)
 
     f = Film(titre, part_of_serie, country, pub_date, director, screenwriter, cast_member, photograph,
              production_company, duration, review, plot, img, genres)
