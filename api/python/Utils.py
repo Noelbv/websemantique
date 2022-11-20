@@ -30,30 +30,30 @@ def get_image_from_wikipedia(id, words):
     )
     sparql.setReturnFormat(JSON)
     sparql.setQuery(query)
-    url = ""
-    """try:
+    try:
         url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
-        print(sparql.queryAndConvert()['results']['bindings'])
     except Exception as e:
+        url = None
         print(e)
+    if url:
+        get_url = requests.get(url)
+        get_text = get_url.text
+        soup = BeautifulSoup(get_text, "html.parser")
+        title = soup.find_all(["h1"])[0].get_text()
 
-    get_url = requests.get(url)
-    get_text = get_url.text
-    soup = BeautifulSoup(get_text, "html.parser")
-    title = soup.find_all(["h1"])[0].get_text()
+        p = wikipedia.page(title, auto_suggest=False)
 
-    p = wikipedia.page(title, auto_suggest=False)
+        imgs = p.images
 
-    imgs = p.images
-
-    for i in imgs:
-        if any(ext in i for ext in words):
-            img = i
-            break
+        for i in imgs:
+            if any(ext in i for ext in words):
+                img = i
+                break
+        else:
+            img = imgs[0]
+        return img
     else:
-        img = imgs[0]
-    return img"""
-    return ""
+        return ""
 
 
 def construct_separated_list_of_result(ret, ret_movie, ret_serie):
@@ -62,12 +62,14 @@ def construct_separated_list_of_result(ret, ret_movie, ret_serie):
     films_series = []
     for r in ret["results"]["bindings"]:
         id = "wd:" + r['object']["value"].split("/")[-1]
-        res = {"id": id, "name": r['objectlabel']["value"]}
+        res = {"id": id, "name": r['objectlabel']["value"],
+               "image": get_image_from_wikipedia(id, r['objectlabel']["value"].split(" "))}
         persons.append(res)
 
     for r in ret_movie["results"]["bindings"]:
         id = "wd:" + r['object']["value"].split("/")[-1]
-        res = {"id": id, "name": r['objectlabel']["value"]}
+        res = {"id": id, "name": r['objectlabel']["value"],
+               "image": get_image_from_wikipedia(id, ["poster"] + r['objectlabel']["value"].split(" "))}
         films.append(res)
 
     for r in ret_serie["results"]["bindings"]:
@@ -203,7 +205,8 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers, ret_movie
     url = None
     try:
         if sparql.queryAndConvert()['results']['bindings']:
-            url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid']['value']
+            url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid'][
+                'value']
     except Exception as e:
         print(e)
 
@@ -317,7 +320,49 @@ def construct_list_genres(ret, genres):
     for ru in ret:
         ri = ru['results']['bindings']
         for r in ri:
-            list_of[i].append([r['flabel']['value'], r['f']['value'].split("/")[-1]])
+            id = r['f']['value'].split("/")[-1]
+            query = """
+                        SELECT ?pageid WHERE {
+                        VALUES (?item) {(%()s)} 
+                        [ schema:about ?item ; schema:name ?name ;
+                          schema:isPartOf <https://en.wikipedia.org/> ]
+                         SERVICE wikibase:mwapi {
+                             bd:serviceParam wikibase:endpoint "en.wikipedia.org" .
+                             bd:serviceParam wikibase:api "Generator" .
+                             bd:serviceParam mwapi:generator "allpages" .
+                             bd:serviceParam mwapi:gapfrom ?name .
+                             bd:serviceParam mwapi:gapto ?name .
+                             ?pageid wikibase:apiOutput "@pageid" .
+                        }
+                    }""".replace("%()s", "wd:" + id)
+            sparql = SPARQLWrapper(
+                "https://query.wikidata.org/sparql"
+            )
+            sparql.setReturnFormat(JSON)
+            sparql.setQuery(query)
+            try:
+                url = "https://en.wikipedia.org/?curid=" + sparql.queryAndConvert()['results']['bindings'][0]['pageid'][
+                    'value']
+            except Exception as e:
+                print(e)
+
+            get_url = requests.get(url)
+            get_text = get_url.text
+            soup = BeautifulSoup(get_text, "html.parser")
+            title = soup.find_all(["h1"])[0].get_text()
+
+            p = wikipedia.page(title, auto_suggest=False)
+            plot = p.content.split("== Plot ==")[1].split("==")[0]
+
+            imgs = p.images
+            img = ""
+            for i in imgs:
+                if "poster" in i:
+                    img = i
+                    break
+            else:
+                img = imgs[0]
+            list_of[i].append([r['flabel']['value'], id, img])
         i += 1
     result = dict(zip(genres, list_of))
     print(result)
