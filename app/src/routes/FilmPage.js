@@ -52,10 +52,10 @@ const FilmPage = () => {
               <div className="text-sm max-h-24 overflow-hidden">
                 {responseFilm.resume}
               </div>
-              <div className="flex flex-row">
+              <div className="flex flex-row text-sm">
                 <div className="flex flex-col w-1/3 order-2">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Director</h3>
-                  <h4 className="text-sm">{responseFilm.director[0]}</h4>
+                  <Link to={`/person/${responseFilm.director[1]}`}>{responseFilm.director[0]}</Link>
                 </div>
                 <div className="flex flex-col w-1/3 order-3">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
