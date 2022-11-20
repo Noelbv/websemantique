@@ -4,6 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import ButtonReturn from "../components/ButtonReturn";
 
+import loadingGIF from "../misc/images/loading.gif";
 // page qui donne les infos d'un film
 const SeriesPage = () => {
 
@@ -83,11 +84,13 @@ const SeriesPage = () => {
       </>
       )}
       {!isDataFetched && seriesExist && (
-        <>
-            <div className="font-poppins text-white font-medium text-xl">
-              Data Processing
-            </div>
-          </>
+        <div className="flex flex-col pt-32 items-center">
+        <img
+          src={loadingGIF}
+          alt="chargement"
+          className="w-1/6"
+        />
+      </div>
       )}
       {isDataFetched && !seriesExist && (
           <div className="flex flex-col mt-24 items-center justify-center">

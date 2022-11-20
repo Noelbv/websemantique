@@ -97,7 +97,7 @@ const FilmPage = () => {
           </>
           ) }
           {!isDataFetched && filmExist && (
-          <div className="flex flex-col pt-48 items-center">
+          <div className="flex flex-col pt-32 items-center">
             <img
               src={loadingGIF}
               alt="chargement"

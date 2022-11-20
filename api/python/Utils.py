@@ -265,7 +265,8 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers, ret_movie
 
         imgs = p.images
         for i in imgs:
-            if "poster" in i or "logo" in i or "wordmark" in i or title in i:
+            if ("poster" in i or "logo" in i or "wordmark" in i or title.split(" ")[0] in i) and i.split(".")[
+                -1] != "ogg":
                 img = i
                 break
         else:

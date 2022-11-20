@@ -3,6 +3,7 @@ import Rating from "@mui/material/Rating";
 import ApiService from "../AppService";
 import { Link } from "react-router-dom";
 
+import loadingGIF from "../misc/images/loading.gif";
 import { useParams } from "react-router-dom";
 
 import HarryPotterImage from "../misc/images/HP5.jpg";
@@ -90,12 +91,14 @@ const FilmPage = () => {
           </>
         ) }
         {!isDataFetched && personExist && (
-          <>
-            <div className="font-poppins text-white font-medium text-xl">
-              Data Processing
-            </div>
-          </>
-        )}
+        <div className="flex flex-col pt-32 items-center">
+          <img
+            src={loadingGIF}
+            alt="chargement"
+            className="w-1/6"
+          />
+        </div>
+      )}
         {isDataFetched && !personExist && (
           <div className="flex flex-col mt-24 items-center justify-center">
             <div className="font-poppins text-center text-2xl mb-8 text-white font-medium">
