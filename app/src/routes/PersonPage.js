@@ -20,19 +20,24 @@ const FilmPage = () => {
   useEffect(() => {
     ApiService.getPerson(idPerson)
       .then((res) => {
-        console.log(res);
-        setResponsePerson(res);
-        if (!isDataFetched) {
+        console.log(res, JSON.stringify(res).length);
+        if(JSON.stringify(res).length < 10) {
           setIsDataFetched(true);
+          setPersonExist(false);
+        } else {
+          setResponsePerson(res);
+          if (!isDataFetched) {
+            setIsDataFetched(true);
+          }
+          if (!personExist) {
+            setPersonExist(true);
+          }
         }
-        if (!personExist) {
-          setPersonExist(true);
-        }
+
       })
       .catch((error) => {
         setIsDataFetched(true);
         setPersonExist(false);
-        console.log("ERRORRRRRRRR");
       });
   }, []);
 

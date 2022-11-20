@@ -16,19 +16,23 @@ const SeriesPage = () => {
   useEffect(() => {
     ApiService.getSeries(idSeries)
       .then((res) => {
-        console.log(res);
-        setResponseSeries(res);
-        if(!isDataFetched) {
+        if(JSON.stringify(res).length < 10) {
           setIsDataFetched(true);
+          setSeriesExist(false);
+        } else {
+          setResponseSeries(res);
+          if(!isDataFetched) {
+            setIsDataFetched(true);
+          }
+          if (!seriesExist) {
+            setSeriesExist(true);
+          }
         }
-        if (!seriesExist) {
-          setSeriesExist(true);
-        }
+
       })
       .catch((error) => {
         setIsDataFetched(true);
         setSeriesExist(false);
-        console.log("ERRORRRRRRRR");
       });
   }, []);
 

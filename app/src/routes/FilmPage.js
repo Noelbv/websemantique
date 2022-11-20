@@ -19,19 +19,22 @@ const FilmPage = () => {
   useEffect(() => {
     ApiService.getMovie(idFilm)
       .then((res) => {
-        console.log(res);
-        setResponseFilm(res);
-        if (!isDataFetched) {
+        if(JSON.stringify(res).length < 10) {
           setIsDataFetched(true);
-        }
-        if (!filmExist) {
-          setFilmExist(true);
+          setFilmExist(false);
+        } else {
+          setResponseFilm(res);
+          if (!isDataFetched) {
+            setIsDataFetched(true);
+          }
+          if (!filmExist) {
+            setFilmExist(true);
+          }
         }
       })
       .catch((error) => {
         setIsDataFetched(true);
         setFilmExist(false);
-        console.log("ERRORRRRRRRR");
       });
   }, []);
 
@@ -66,7 +69,7 @@ const FilmPage = () => {
               <div className="mt-4 flex flex-row text-sm">
                 <div className="flex flex-col w-1/3 order-2">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Director</h3>
-                  <Link to={`/person/${responseFilm.director[1]}`}>{responseFilm.director[0]}</Link>
+                    <Link to={`/person/${responseFilm.director[1]}`}>{responseFilm.director[0]}</Link>
                   <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
                   <ul className="text-sm">
                     {screenwriter.map((name, index) => (<li key={index}><Link to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
