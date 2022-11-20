@@ -14,9 +14,9 @@ class ApiService {
     return response.json();
   }
 
-  static getActor = async (idActor) => {
+  static getPerson = async (idPerson) => {
     const response = await fetch(
-        `/actor?id=${idActor}`
+        `/person?id=${idPerson}`
         );
     return response.json();
   }
