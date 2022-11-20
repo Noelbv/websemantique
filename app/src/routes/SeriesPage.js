@@ -68,7 +68,7 @@ const SeriesPage = () => {
           <div className="flex flex-col w-1/3 order-1">
               <h3 className="font-semibold text-xl mt-4 mb-2">Films</h3>
               {movies.map((movie,index) => (
-                <Link key={index} to={`/film/wd:${movie[1]}`}>{movie[0]}</Link>
+                <Link className="hover:text-rose-900 hover:underline" key={index} to={`/film/wd:${movie[1]}`}>{movie[0]}</Link>
               ))}
           </div>
             <div className="flex flex-col w-1/3 order-3">

@@ -6,6 +6,8 @@ import HarryPotterImage1 from "../misc/images/HP1.jpg";
 import HarryPotterImage5 from "../misc/images/HP5.jpg";
 import ApiService from "../AppService";
 import AppContext from "../context";
+import loadingGIF from "../misc/images/loading.gif";
+import FilmBox from "../components/FilmBox.js"
 // page qui présente les résultats d'une recherche
 const SearchPage = () => {
   const [responseSearch, setResponseSearch] = useState("");
@@ -31,32 +33,30 @@ const SearchPage = () => {
   return (
     <div className="bg-blacked flex flex-col items-stretch h-screen overflow-y-auto">
       <NavBar inputSearch={input} />
-      <div className="container mx-auto flex flex-col mt-32 gap-5">
+      <div className="container mx-auto flex flex-col pl-12 mt-32 gap-5">
         {isDataFetched ? (
           <>
-            <div className="font-poppins text-white font-medium text-xl">
+            <div className="font-poppins text-white font-bold text-2xl">
               Meilleurs Résultats 
             </div>
-            <div className="container flex flex-col gap-5">
+            <div className="flex flex-wrap gap-6">
               {films.map((item) => {
               if(item.image !== "") {
                 return (
-                 <PreviewFilm
-                 key={item.id}
-                 id={item.id}
-                 image={item.image}
-                 title={item.name}
-                 duration="2h30"
+               <FilmBox
+               key={item.id} title={item.name} duration={item.duration.substr(0,3)} idFilm={item.id} imageUrl={item.image}
                />
               )}})}
             </div>
           </>
         ) : (
-          <>
-            <div className="font-poppins text-white font-medium text-xl">
-              Data Processing
-            </div>
-          </>
+          <div className="flex flex-col pt-32 items-center">
+            <img
+              src={loadingGIF}
+              alt="chargement"
+              className="w-1/6"
+            />
+          </div>
         )}
       </div>
     </div>

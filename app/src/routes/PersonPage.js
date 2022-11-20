@@ -86,7 +86,7 @@ const FilmPage = () => {
                   <ul className="text-sm">
                     {movies.map((name, index) => (
                       <li key={index}>
-                        <Link to={`/film/${name[1]}`}>{name[0]}</Link>
+                        <Link className="hover:text-rose-900 hover:underline" to={`/film/${name[1]}`}>{name[0]}</Link>
                       </li>
                     ))}
                   </ul>

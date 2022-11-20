@@ -16,14 +16,14 @@ const FilmBox = (props) => {
       <img
         src={props.imageUrl}
         alt="film"
-        className="absolute rounded-lg object-cover h-full w-full"
+        className="rounded-lg object-cover h-full w-full"
       />
-      <div className="group-hover/edit:h-full transition-h duration-100 ease-in-out absolute opacity-80 bottom-0 bg-black w-full h-16"></div>
-      <div className="flex flex-col h-full justify-end">
+      <div className="flex flex-col py-2 justify-center absolute group-hover/edit:h-full transition-h duration-100 ease-in-out bottom-0 w-full">
+        <div className="absolute bg-black opacity-80 w-full h-full z-10"></div>
         <p id="title" className="group-hover/edit:text-2xl transition-text duration-100 ease-in-out font-poppins font-semibold text-md text-white z-30 px-2 pb-1">
           {props.title}
         </p>
-        <p id="duration" className="group-hover/edit:text-xl transition-text duration-100 ease-in-out group-hover/edit:pb-16 transition-pb duration-100 ease-in-out font-poppins text-sm font-semibold text-rose-900 z-20 pb-1">
+        <p id="duration" className="group-hover/edit:text-xl transition-text duration-100 ease-in-out group-hover/edit:pb-16 transition-pb duration-100 ease-in-out font-poppins text-sm font-semibold text-rose-900 z-20">
           {props.duration} min
         </p>
       </div>
