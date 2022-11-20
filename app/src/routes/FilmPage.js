@@ -19,7 +19,7 @@ const FilmPage = () => {
   useEffect(() => {
     ApiService.getMovie(idFilm)
       .then((res) => {
-        if(JSON.stringify(res).length < 10) {
+        if (JSON.stringify(res).length < 10) {
           setIsDataFetched(true);
           setFilmExist(false);
         } else {
@@ -48,7 +48,7 @@ const FilmPage = () => {
     <div className="bg-blacked font-poppins flex-col items-stretch h-screen text-gray-200  overflow-y-auto hide-scroll-bar">
       <NavBar />
       <div className="pt-24">
-      {isDataFetched && filmExist && (
+        {isDataFetched && filmExist && (
           <>
             <div
               id="header"
@@ -98,8 +98,8 @@ const FilmPage = () => {
               </div>
             </div>
           </>
-          ) }
-          {!isDataFetched && filmExist && (
+        )}
+        {!isDataFetched && filmExist && (
           <div className="flex flex-col pt-32 items-center">
             <img
               src={loadingGIF}
