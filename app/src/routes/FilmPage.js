@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Rating from "@mui/material/Rating";
 import ApiService from "../AppService";
+import { Link } from "react-router-dom";
 
-import HarryPotterImage from "../misc/images/HP5.jpg";
+import { useParams } from "react-router-dom";
 
 import NavBar from "../components/NavBar";
 // page qui donne les infos d'un film
@@ -10,9 +11,10 @@ const FilmPage = () => {
 
   const [responseFilm, setResponseFilm] = useState("");
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const { idFilm } = useParams();
 
   useEffect(() => {
-    ApiService.getMovie("wd:Q24871")
+    ApiService.getMovie(idFilm)
       .then((res) => {
         console.log(res);
         setResponseFilm(res);
@@ -58,7 +60,7 @@ const FilmPage = () => {
                 <div className="flex flex-col w-1/3 order-3">
                   <h3 className="font-semibold text-xl mt-4 mb-2">Screenwriter</h3>
                   <ul className="text-sm">
-                    {screenwriter.map(s => (<li>{s[0]}</li>))}
+                    {screenwriter.map(s => (<li><Link to={`/person/${s[1]}`}>{s[0]}</Link></li>))}
                   </ul>
                 </div>
                 <div className="flex flex-col w-1/3 order-1">

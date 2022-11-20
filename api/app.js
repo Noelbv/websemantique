@@ -9,7 +9,7 @@ var indexRouter = require('./routes/index');
 var searchFilmRouter = require('./routes/searchFilmAPI');
 var getMovieRouter = require('./routes/getMovieAPI');
 var getSeriesRouter = require('./routes/getSeriesAPI');
-var getActorRouter = require('./routes/getActorAPI');
+var getPersonRouter = require('./routes/getPersonAPI');
 
 var app = express();
 
@@ -28,7 +28,7 @@ app.use('/', indexRouter);
 app.use('/search', searchFilmRouter);
 app.use("/movie", getMovieRouter);
 app.use("/series", getSeriesRouter);
-app.use("/actor", getActorRouter);
+app.use("/person", getPersonRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
