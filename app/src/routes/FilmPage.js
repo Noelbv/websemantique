@@ -66,7 +66,7 @@ const FilmPage = () => {
                 <div className="flex flex-col w-1/3 order-1">
                   <h3 className="font-semibold text-xl mt-4 mb-2 ">Cast members</h3>
                   <ul className="text-sm">
-                    {casting.map(s => (<li>{s[0]}</li>))}
+                    {casting.map(s => (<li><Link to={`/person/wd:${s[1]}`}>{s[0]}</Link></li>))}
                   </ul>
                 </div>
               </div>
