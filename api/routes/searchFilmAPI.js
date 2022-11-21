@@ -8,7 +8,7 @@ const {exec, spawn} = require('child_process');
 router.get('*', function(req, res, next) {
 	var capitalizedFirstInput = req.query.input.charAt(0).toUpperCase() + req.query.input.slice(1);
 
-	var process = spawn('python3',["./python/main.py", "0", capitalizedFirstInput]);
+	var process = spawn('python',["./python/main.py", "0", capitalizedFirstInput]);
 	var listResults;
 	process.stdout.on('data', (data) => {
 		console.log('Child Process STDOUT');
@@ -18,7 +18,11 @@ router.get('*', function(req, res, next) {
 
 	});
 	process.stderr.on('data', (error) => {
-		res.send(JSON.parse(error));
+		try{
+			res.send(JSON.parse(error));
+		} catch(e) {
+			res.send(e);
+		}
 	});
 });
 

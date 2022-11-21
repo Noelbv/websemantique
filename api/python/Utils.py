@@ -202,11 +202,11 @@ def construct_film_series(ret, id, ret_genre, ret_cast, ret_producers, ret_movie
 
     casting = []
     for re in ret_cast["results"]["bindings"]:
-        casting.append(re['objectlabel']['value'])
+        casting.append([re['objectlabel']['value'], re['list']['value'].split("/")[-1]])
 
     producers = []
     for re in ret_producers["results"]["bindings"]:
-        producers.append(re['objectlabel']['value'])
+        producers.append([re['objectlabel']['value'], re['list']['value'].split("/")[-1]])
 
     movies = []
     for re in ret_movies["results"]["bindings"]:

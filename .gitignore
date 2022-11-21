@@ -5,7 +5,7 @@
 /api/node_modules
 /.pnp
 .pnp.js
-
+/api/python/__pycache__
 # testing
 /coverage
 
@@ -26,3 +26,5 @@ yarn-debug.log*
 yarn-error.log*
 gotoAPI.bat
 launch_api.bat
+node_modules
+perso

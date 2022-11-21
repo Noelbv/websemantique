@@ -127,7 +127,7 @@ class SPARQLCall:
 
         # Casting
         query_cast = """
-        select  ?objectlabel where
+        select  ?list ?objectlabel where
         {
         %()s wdt:P31 ?instance;
                      wdt:P161 ?list.
@@ -139,7 +139,7 @@ class SPARQLCall:
 
         # Producers
         query_producers = """
-        select  ?objectlabel where
+        select  ?list ?objectlabel where
         {
         %()s wdt:P31 ?instance;
                      wdt:P162 ?list.

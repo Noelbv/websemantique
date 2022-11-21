@@ -74,13 +74,13 @@ const SeriesPage = () => {
             <div className="flex flex-col w-1/3 order-3">
               <h3 className="font-semibold text-xl mt-4 mb-2">Producers</h3>
               <ul className="text-sm">
-                {producers.map((name,index) => (<li key={index}>{name}</li>))}
+                {producers.map((name,index) => (<li key={index}><Link className="hover:text-rose-900 hover:underline" to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
               </ul>
             </div>
             <div className="flex flex-col w-1/3 order-2">
               <h3 className="font-semibold text-xl mt-4 mb-2 ">Cast members</h3>
               <ul className="text-sm">
-                {casting.map((name,index) => (<li key={index}>{name}</li>))}
+              {casting.map((name, index) => (<li key={index}><Link className="hover:text-rose-900 hover:underline" to={`/person/wd:${name[1]}`}>{name[0]}</Link></li>))}
               </ul>
             </div>
           </div>
@@ -93,6 +93,7 @@ const SeriesPage = () => {
           src={loadingGIF}
           alt="chargement"
           className="w-1/6"
+          max-width="100px"
         />
       </div>
       )}
