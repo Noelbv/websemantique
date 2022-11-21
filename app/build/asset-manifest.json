@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a7370ceb.css",
+    "main.js": "/static/js/main.7e8a9ef0.js",
+    "static/media/HP5.jpg": "/static/media/HP5.0cffedc3bd5d917b24c0.jpg",
+    "static/media/loading.gif": "/static/media/loading.b2cea284b6e3542a3e55.gif",
+    "static/media/HP1.jpg": "/static/media/HP1.bb4c1508fe82d5419590.jpg",
+    "index.html": "/index.html",
+    "main.a7370ceb.css.map": "/static/css/main.a7370ceb.css.map",
+    "main.7e8a9ef0.js.map": "/static/js/main.7e8a9ef0.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a7370ceb.css",
+    "static/js/main.7e8a9ef0.js"
+  ]
+}
