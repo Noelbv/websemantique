@@ -24,12 +24,12 @@ _Noe à remplir_
 - Affichage d’une liste de films (nom, durée, image) qui correspondent à une recherche
 - Clicker sur un film pour avoir plus d’informations 
 
-**Fiche de film : **
+**Fiche de film :**
 - Affichage de la photo d’un film et son titre 
 - Détails du film (description, acteurs, producteurs, scénaristes, note/avis)
 - Lien vers les personnes associé au film et la série de film si existante 
 
-**Fiche Personne : **
+**Fiche Personne :**
 - Détails des infos personne
 - lien vers les films associés 
 
