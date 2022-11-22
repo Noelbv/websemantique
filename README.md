@@ -66,5 +66,5 @@ On utilise également les routes/url pour stocker les paramètres d’une recher
 
 
 
-### Auteurs 
+## Auteurs 
 Noé Le Blavec - Antoine Vraux - Yanice Boady - Maxime Brun - Jean Abou Moussa - Hugo Laface
