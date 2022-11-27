@@ -12,8 +12,6 @@
 - Dans le second terminal, initialiser le Back-End avec : _cd api_ puis _yarn install_ et _yarn python-setup_ (qui télécharge les bibliothèques python nécessaire au bon fonctionnement des requêtes SPARQL).
 - Pour le lancer, entrer _yarn start_.
 
-_Noe à remplir_
-
 ## Fonctionnalités
 
 **Films par genre :**
