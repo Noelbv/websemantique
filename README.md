@@ -4,7 +4,7 @@
 
 > This application is a web app designed to search and consult information about cinema and films. The goal of this Semantic Web project is to use a given source organized as a **knowledge graph**. To achieve this, we utilized the **Wikidata** database, on which we performed queries using the **SPARQL** language. On the web application side, the front-end was developed with **React.js** and the micro-services part with **Node.js**.
 
-![Screnshot of the App](/Homepage.jpg)
+![Screnshot of the App](/Homepage.png)
 
 ---
 
